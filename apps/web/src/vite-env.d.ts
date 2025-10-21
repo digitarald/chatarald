@@ -2,6 +2,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_OPENROUTER_API_KEY?: string;
+  readonly VITE_DEFAULT_MODEL?: string;
 }
 
 interface ImportMeta {

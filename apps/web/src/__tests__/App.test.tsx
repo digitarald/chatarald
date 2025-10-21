@@ -24,6 +24,7 @@ vi.mock('@/hooks/useTokenCount', () => ({
 
 // Mock environment
 vi.stubEnv('VITE_OPENROUTER_API_KEY', 'test-key');
+vi.stubEnv('VITE_DEFAULT_MODEL', 'openrouter:x-ai/grok-2-1212');
 
 describe('App Component', () => {
   beforeEach(() => {
@@ -35,7 +36,6 @@ describe('App Component', () => {
 
     // Sidebar elements
     expect(screen.getByText('Chatarald')).toBeInTheDocument();
-    expect(screen.getByRole('combobox')).toBeInTheDocument(); // Model selector
     expect(screen.getByRole('button', { name: /new chat/i })).toBeInTheDocument();
 
     // Empty state
@@ -116,16 +116,6 @@ describe('App Component', () => {
 
     // Should have active styling (check via class or other means)
     expect(chat2.closest('.active, [data-active="true"]')).toBeTruthy();
-  });
-
-  it('changes model selection', async () => {
-    render(<App />);
-
-    const modelSelect = screen.getByRole('combobox');
-    
-    // Initially shows GPT-4o
-    expect(screen.getByText('GPT-4o')).toBeInTheDocument();
-    expect(modelSelect).toBeInTheDocument();
   });
 
   it('applies dark theme to sidebar', () => {

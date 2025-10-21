@@ -3,18 +3,16 @@ import Chat from './components/Chat';
 import type { Conversation, ModelId } from '@example/types';
 import { getConversations, saveConversation } from './store/conversations';
 import { Button } from './components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/select';
 import { ScrollArea } from './components/ui/scroll-area';
 import { Separator } from './components/ui/separator';
 import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from './lib/utils';
 
-const DEFAULT_MODEL: ModelId = 'openrouter:gpt-4o';
+const DEFAULT_MODEL: ModelId = (import.meta.env.VITE_DEFAULT_MODEL || 'openrouter:x-ai/grok-2-1212') as ModelId;
 
 export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
-  const [selectedModel, setSelectedModel] = useState<ModelId>(DEFAULT_MODEL);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   useEffect(() => {
@@ -26,7 +24,6 @@ export default function App() {
     setConversations(loaded);
     if (loaded.length > 0 && !currentConversationId) {
       setCurrentConversationId(loaded[0].id);
-      setSelectedModel(loaded[0].model);
     }
   };
 
@@ -34,7 +31,7 @@ export default function App() {
     const newConv: Conversation = {
       id: crypto.randomUUID(),
       title: `Chat ${conversations.length + 1}`,
-      model: selectedModel,
+      model: DEFAULT_MODEL,
       createdAt: Date.now(),
       updatedAt: Date.now()
     };
@@ -83,23 +80,6 @@ export default function App() {
 
         {!isSidebarCollapsed && (
           <>
-            {/* Model Selector */}
-            <div className="flex flex-col gap-2 px-4 py-3">
-              <label htmlFor="model" className="text-sm font-medium opacity-90">
-                Model:
-              </label>
-              <Select value={selectedModel} onValueChange={(value) => setSelectedModel(value as ModelId)}>
-                <SelectTrigger className="bg-white text-slate-900">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="openrouter:gpt-4o">GPT-4o</SelectItem>
-                  <SelectItem value="openrouter:claude-3.7">Claude 3.7</SelectItem>
-                  <SelectItem value="openrouter:gemini-2">Gemini 2</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
             {/* New Chat Button */}
             <div className="px-4">
               <Button
@@ -122,7 +102,6 @@ export default function App() {
                     key={conv.id}
                     onClick={() => {
                       setCurrentConversationId(conv.id);
-                      setSelectedModel(conv.model);
                     }}
                     className={cn(
                       'px-3 py-2.5 rounded-md text-sm text-left transition-all',

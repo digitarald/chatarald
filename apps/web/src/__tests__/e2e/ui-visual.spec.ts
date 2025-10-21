@@ -15,7 +15,7 @@ test.describe('UI Visual Regression', () => {
     });
   });
 
-  test('sidebar with model selector', async ({ page }) => {
+  test('sidebar layout', async ({ page }) => {
     await page.waitForLoadState('networkidle');
     
     // Focus on sidebar area
@@ -29,16 +29,6 @@ test.describe('UI Visual Regression', () => {
     // Focus on main chat area
     const main = page.getByRole('main');
     await expect(main).toHaveScreenshot('chat-input.png');
-  });
-
-  test('model selector dropdown', async ({ page }) => {
-    await page.waitForLoadState('networkidle');
-    
-    // Open model selector
-    await page.getByRole('combobox', { name: /select a model/i }).click();
-    
-    // Screenshot dropdown
-    await expect(page).toHaveScreenshot('model-dropdown.png');
   });
 
   test('typing indicator animation', async ({ page }) => {

@@ -25,7 +25,8 @@ export default defineConfig(({ mode }) => {
     define: {
       global: 'globalThis',
       // Explicitly define env vars for browser
-      'import.meta.env.VITE_OPENROUTER_API_KEY': JSON.stringify(env.VITE_OPENROUTER_API_KEY)
+      'import.meta.env.VITE_OPENROUTER_API_KEY': JSON.stringify(env.VITE_OPENROUTER_API_KEY),
+      'import.meta.env.VITE_DEFAULT_MODEL': JSON.stringify(env.VITE_DEFAULT_MODEL || 'openrouter:x-ai/grok-2-1212')
     }
   };
 });
