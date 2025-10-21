@@ -1,0 +1,17 @@
+{
+  "name": "chatarald",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Test-driven, library-first Chat App (TypeScript, pnpm workspaces)",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter ./apps/web dev",
+    "test": "pnpm -r test"
+  },
+  "devDependencies": {
+    "pnpm": "^9.0.0"
+  }
+}
