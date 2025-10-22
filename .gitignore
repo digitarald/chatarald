@@ -9,3 +9,4 @@ coverage/
 apps/web/playwright-report/
 apps/web/test-results/
 .playwright-mcp
+*.tsbuildinfo
