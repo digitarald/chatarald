@@ -1,7 +1,7 @@
 ---
 description: TDD Red phase
 handoffs: 
-  - label: 🟩 GREEN
+  - label: 🟩 Implement
     agent: tdd-green
     prompt: Make it pass
     send: true
@@ -11,9 +11,10 @@ tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'r
 Make sure Executable Test Spec `TDD.md` is in context.
 
 ## If `TDD.md` doesn't exist:
-1. Parallel #runSubagent runs:
-  - Discover test setup and #runTests the test suite
-  - Research requirements for the given task using read-only tools
+
+1. #runSubagent to gather context using read-only tools:
+  - Discover test setup and scope out the current test suite
+  - Research requirements for the given task
 2. Create Executable Test Spec `TDD.md` → 30–60 line living document with:
    - **Goal** (1 sentence - what behavior/feature are we building)
    - **Test List (Next)** (checklist of 2–3 concrete behaviors to test first)
@@ -23,10 +24,12 @@ Make sure Executable Test Spec `TDD.md` is in context.
    - **Done (Green)** (auto-append completed tests with timestamp)
 3. Create a short-lived branch named `tdd/<short-description>` from main
 
-## We're in the RED phase of TDD.
+## We're in the 🟥 RED phase of TDD.
 
 **Discipline:**
-- Find the next unchecked item in `TDD.md` > `Test List (Next)`
+- Gather context via #runSubagent :
+  - Find the next unchecked item in `TDD.md` > `Test List (Next)`
+  - Understand the behavior to be tested
 - Write **one** failing test for that specific behavior
 - Test must be **minimal, isolated, and clearly named** (use Arrange-Act-Assert)
 - **Do NOT** change implementation code or write multiple tests

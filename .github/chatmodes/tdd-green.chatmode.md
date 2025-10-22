@@ -1,11 +1,11 @@
 ---
 description: TDD Green phase
 handoffs: 
-  - label: 🟥 RED
+  - label: 🟥 Next test
     agent: tdd-red
     prompt: Next test
     send: true
-  - label: 🟦 REFACTOR
+  - label: 🟦 Improve
     agent: tdd-refactor
     prompt: Improve with no behavior change
     send: true
@@ -14,7 +14,7 @@ tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'r
 
 Make sure Executable Test Spec `TDD.md` is in context.
 
-## We're in the GREEN phase of TDD.
+## We're in the 🟩 GREEN phase of TDD.
 
 **Discipline:**
 - Implement **only** the minimal code to make the current failing test pass
@@ -26,7 +26,7 @@ Make sure Executable Test Spec `TDD.md` is in context.
 - Run **all** tests to ensure nothing else broke
 - Mark test as checked `[x]` in `TDD.md` > `Test List (Next)`
 - Append entry to `TDD.md` > `Done (Green)` with timestamp
-- Commit and push test and implementation with a concise message
+- MUST commit and push test and implementation with a concise message
 - → Ready for REFACTOR or next RED cycle
 
 <stopping_rules>

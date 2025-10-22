@@ -103,7 +103,7 @@ describe('MessageBubble Component', () => {
 
     render(<MessageBubble message={messageWithReasoning} />);
 
-    // Should render ReasoningDisplay component
-    expect(screen.getByText(/thinking/i)).toBeInTheDocument();
+    // Should render ReasoningDisplay component with reasoning text
+    expect(screen.getByText(/step by step/i)).toBeInTheDocument();
   });
 });

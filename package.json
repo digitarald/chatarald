@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "pnpm --filter ./apps/web dev",
-    "test": "pnpm -r test"
+    "test": "pnpm -r test -- --no-ui"
   },
   "devDependencies": {
     "pnpm": "^9.0.0"

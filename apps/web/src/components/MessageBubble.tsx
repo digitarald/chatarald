@@ -3,6 +3,7 @@ import type { Message } from '@example/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
 import { TypingIndicator } from './TypingIndicator';
+import { ReasoningDisplay } from './ReasoningDisplay';
 import { cn } from '@/lib/utils';
 
 interface MessageBubbleProps {
@@ -69,6 +70,10 @@ export function MessageBubble({ message, isLoading }: MessageBubbleProps) {
         <p className="text-sm leading-relaxed whitespace-pre-wrap break-words relative z-10">
           {message.content}
         </p>
+
+        {message.reasoning_details && (
+          <ReasoningDisplay details={message.reasoning_details} />
+        )}
 
         {message.usage && (
           <div className="mt-2 pt-2 border-t border-current/10">

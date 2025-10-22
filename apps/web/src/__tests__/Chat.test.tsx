@@ -108,6 +108,9 @@ describe('Chat Component', () => {
     const user = userEvent.setup();
     const { saveMessage } = await import('@/store/conversations');
     
+    // Clear previous mock calls
+    vi.mocked(saveMessage).mockClear();
+    
     render(<Chat conversationId="test-123" model="openrouter:grok-2-1212" />);
 
     const input = screen.getByPlaceholderText(/type your message/i);

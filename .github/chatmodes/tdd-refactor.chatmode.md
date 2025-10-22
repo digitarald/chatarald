@@ -1,7 +1,7 @@
 ---
 description: TDD Refactoring phase
 handoffs: 
-  - label: 🟥 RED
+  - label: 🟥 Next test
     agent: tdd-red
     prompt: Next test
     send: true
@@ -10,7 +10,7 @@ tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'r
 
 Make sure Executable Test Spec `TDD.md` is in context.
 
-## We're in the REFACTOR phase of TDD.
+## We're in the 🟦 REFACTOR phase of TDD.
 
 **Discipline:**
 - **All tests must remain passing** throughout - never proceed with failing tests

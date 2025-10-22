@@ -4,8 +4,7 @@
 
 ## Test List (Next)
 
-- [x] Chat component passes reasoning_details from ChatResult to Message when saving
-- [x] **IN PROGRESS** - MessageBubble renders ReasoningDisplay when message has reasoning_details
+- [ ] MessageBubble renders ReasoningDisplay when message has reasoning_details
 - [ ] ReasoningDisplay shows all reasoning details uniformly (no visual distinction between types)
 - [ ] Collapsible starts open, then collapses when content arrives
 - [ ] Chat component has reasoning effort toggle (high/medium/low pills)
@@ -93,6 +92,12 @@ interface ChatResult {
   - Added reasoning field to ChatRequest interface
   - Driver conditionally includes reasoning parameter in API request
   - Test captures and validates request body
+
+- ✅ **Chat passes reasoning_details from ChatResult to Message** (Oct 21, 21:55)
+  - Chat component extracts reasoningDetails from ChatResult
+  - Assigns reasoning_details field when creating assistant Message
+  - Message is saved with reasoning_details intact
+  - Test validates reasoning array is preserved through save
 
 - ✅ **Chat component passes reasoning_details from ChatResult to Message when saving** (Oct 21, 17:45)
   - Added reasoning_details field to assistantMessage object in Chat.tsx

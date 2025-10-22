@@ -49,6 +49,9 @@ export const OpenRouterDriver: LlmDriver = {
     const message = completion.choices[0]?.message;
     const usage = completion.usage;
     const reasoningDetails = (message as any)?.reasoning_details;
+    
+    console.log('Driver received message:', message);
+    console.log('Driver extracted reasoningDetails:', reasoningDetails);
 
     return {
       text: message?.content || '',

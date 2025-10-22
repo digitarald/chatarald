@@ -6,9 +6,11 @@ export const handlers = [
     const body = await request.json() as any;
     
     // Mock reasoning_details for grok models
+    console.log('Mock handler received model:', body.model);
     const includeReasoning = body.model?.includes('grok');
+    console.log('includeReasoning:', includeReasoning);
     
-    return HttpResponse.json({
+    const response = HttpResponse.json({
       id: 'chatcmpl-test',
       object: 'chat.completion',
       created: Date.now(),
@@ -48,5 +50,11 @@ export const handlers = [
         total_tokens: 30,
       },
     });
+    
+    if (includeReasoning) {
+      console.log('Mock response message:', (response as any)._response?.body);
+    }
+    
+    return response;
   }),
 ];
