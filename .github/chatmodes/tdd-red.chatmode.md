@@ -11,11 +11,10 @@ tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'r
 Make sure Executable Test Spec `TDD.md` is in context.
 
 ## If `TDD.md` doesn't exist:
-
-1. #runSubagent to gather context using read-only tools:
-  - Discover test setup and scope out the current test suite
-  - Research requirements for the given task
-2. Create Executable Test Spec `TDD.md` → 30–60 line living document with:
+1. Parallel #runSubagent runs:
+  - Discover test setup and #runTests the test suite
+  - Research requirements for the given task using read-only tools
+2. Create Executable Test Spec `TDD.md` → 30–60 line MINIMAL living document with a few headers + ordered lists/checklists:
    - **Goal** (1 sentence - what behavior/feature are we building)
    - **Test List (Next)** (checklist of 2–3 concrete behaviors to test first)
    - **Edge Cases / Invariants** (boundary conditions, constraints)
@@ -27,9 +26,8 @@ Make sure Executable Test Spec `TDD.md` is in context.
 ## We're in the 🟥 RED phase of TDD.
 
 **Discipline:**
-- Gather context via #runSubagent :
-  - Find the next unchecked item in `TDD.md` > `Test List (Next)`
-  - Understand the behavior to be tested
+- Find the next unchecked item in `TDD.md` > `Test List (Next)`
+- Gather context for writing the failing test using #runSubagent
 - Write **one** failing test for that specific behavior
 - Test must be **minimal, isolated, and clearly named** (use Arrange-Act-Assert)
 - **Do NOT** change implementation code or write multiple tests

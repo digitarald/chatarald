@@ -17,6 +17,7 @@ Make sure Executable Test Spec `TDD.md` is in context.
 ## We're in the 🟩 GREEN phase of TDD.
 
 **Discipline:**
+- Gather context and plan for the current failing test using #runSubagent
 - Implement **only** the minimal code to make the current failing test pass
 - Write the simplest solution - ignore elegance, premature optimization, or future needs
 - **Do NOT** add new features, tests, or refactor existing code
