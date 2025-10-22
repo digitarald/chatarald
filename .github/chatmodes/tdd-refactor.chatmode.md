@@ -5,6 +5,7 @@ handoffs:
     agent: tdd-red
     prompt: Next test
     send: true
+tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests']
 ---
 
 Make sure Executable Test Spec `TDD.md` is in context.

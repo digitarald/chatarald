@@ -103,4 +103,32 @@ describe('Chat Component', () => {
     // Initially shows placeholder
     expect(screen.getByText(/send a message to see token usage/i)).toBeInTheDocument();
   });
+
+  it('passes reasoning_details from ChatResult to Message when saving', async () => {
+    const user = userEvent.setup();
+    const { saveMessage } = await import('@/store/conversations');
+    
+    render(<Chat conversationId="test-123" model="openrouter:grok-2-1212" />);
+
+    const input = screen.getByPlaceholderText(/type your message/i);
+    const button = screen.getByRole('button');
+
+    await user.type(input, 'Solve this step by step');
+    await user.click(button);
+
+    // Wait for assistant response
+    await waitFor(() => {
+      expect(screen.getByText(/test response/i)).toBeInTheDocument();
+    });
+
+    // Check that saveMessage was called with reasoning_details
+    const saveCalls = vi.mocked(saveMessage).mock.calls;
+    const assistantMessageCall = saveCalls.find(
+      call => call[0].role === 'assistant'
+    );
+
+    expect(assistantMessageCall).toBeDefined();
+    expect(assistantMessageCall![0].reasoning_details).toBeDefined();
+    expect(Array.isArray(assistantMessageCall![0].reasoning_details)).toBe(true);
+  });
 });

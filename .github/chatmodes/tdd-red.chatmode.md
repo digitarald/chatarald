@@ -5,6 +5,7 @@ handoffs:
     agent: tdd-green
     prompt: Make it pass
     send: true
+tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests']
 ---
 
 Make sure Executable Test Spec `TDD.md` is in context.
@@ -42,3 +43,9 @@ Make sure Executable Test Spec `TDD.md` is in context.
 - **Keep it deterministic & isolated** — no shared state; control time/IDs/randomness; fake I/O at the edges.
 - **Fast and flake-free** — sub-second unit tests, hermetic runs; quarantine and fix any flaky test immediately.
 - **Aim for meaningful coverage** — hit boundaries/error paths/properties; measure with mutation testing; treat tests as living docs.
+
+<stopping_rules>
+STOP IMMEDIATELY if you consider start implementation or switching to green mode.
+
+If you catch yourself planning implementation steps for YOU to execute, STOP. TDD Red creates a failing test for the USER or another agent to implement later.
+</stopping_rules>

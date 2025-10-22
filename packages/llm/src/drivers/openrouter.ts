@@ -28,7 +28,7 @@ export const OpenRouterDriver: LlmDriver = {
     
     const modelId = input.model.replace('openrouter:', '');
     
-    const completion = await client.chat.completions.create({
+    const requestBody: any = {
       model: modelId,
       messages: [
         { role: 'system', content: input.system ?? DEFAULT_SYSTEM_PROMPT },
@@ -37,10 +37,18 @@ export const OpenRouterDriver: LlmDriver = {
           content: m.content
         }))
       ]
-    });
+    };
+
+    // Add reasoning parameter if provided
+    if (input.reasoning) {
+      requestBody.reasoning = input.reasoning;
+    }
+    
+    const completion = await client.chat.completions.create(requestBody);
 
     const message = completion.choices[0]?.message;
     const usage = completion.usage;
+    const reasoningDetails = (message as any)?.reasoning_details;
 
     return {
       text: message?.content || '',
@@ -50,6 +58,7 @@ export const OpenRouterDriver: LlmDriver = {
         completionTokens: usage.completion_tokens,
         totalTokens: usage.total_tokens
       } : undefined,
+      reasoningDetails: reasoningDetails || undefined,
       raw: completion
     };
   }

@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { OpenRouterDriver } from '../src/drivers/openrouter';
 import { DEFAULT_SYSTEM_PROMPT } from '../src/types';
+import { server } from './setup';
+import { http, HttpResponse } from 'msw';
 
 describe('OpenRouterDriver', () => {
   beforeEach(() => {
@@ -67,6 +69,61 @@ describe('OpenRouterDriver', () => {
       });
 
       expect(result.text).toBeTruthy();
+    });
+
+    it('should extract reasoning_details from API response when present', async () => {
+      const result = await OpenRouterDriver.chat({
+        model: 'openrouter:grok-2-1212',
+        messages: [{ role: 'user', content: 'Solve this problem step by step' }]
+      });
+
+      expect(result.reasoningDetails).toBeDefined();
+      expect(Array.isArray(result.reasoningDetails)).toBe(true);
+      expect(result.reasoningDetails!.length).toBeGreaterThan(0);
+      
+      const firstDetail = result.reasoningDetails![0];
+      expect(firstDetail.type).toMatch(/^reasoning\.(summary|text|encrypted)$/);
+      expect(firstDetail.format).toBeDefined();
+    });
+
+    it('should send reasoning effort parameter when provided', async () => {
+      let capturedRequestBody: any;
+
+      // Temporarily override handler to capture request
+      server.use(
+        http.post('https://openrouter.ai/api/v1/chat/completions', async ({ request }) => {
+          capturedRequestBody = await request.json();
+          return HttpResponse.json({
+            id: 'chatcmpl-test',
+            object: 'chat.completion',
+            created: Date.now(),
+            model: 'grok-2-1212',
+            choices: [{
+              index: 0,
+              message: {
+                role: 'assistant',
+                content: 'Response with reasoning'
+              },
+              finish_reason: 'stop'
+            }],
+            usage: {
+              prompt_tokens: 50,
+              completion_tokens: 15,
+              total_tokens: 65
+            }
+          });
+        })
+      );
+
+      await OpenRouterDriver.chat({
+        model: 'openrouter:grok-2-1212',
+        messages: [{ role: 'user', content: 'Test' }],
+        reasoning: { effort: 'high' }
+      });
+
+      expect(capturedRequestBody).toBeDefined();
+      expect(capturedRequestBody.reasoning).toBeDefined();
+      expect(capturedRequestBody.reasoning.effort).toBe('high');
     });
   });
 });
