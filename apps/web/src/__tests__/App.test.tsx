@@ -118,11 +118,17 @@ describe('App Component', () => {
     expect(chat2.closest('.active, [data-active="true"]')).toBeTruthy();
   });
 
-  it('applies dark theme to sidebar', () => {
+  it('sidebar has gradient background styling', () => {
     const { container } = render(<App />);
     
-    // Check for dark theme classes on sidebar
-    const sidebar = container.querySelector('[class*="slate-900"], [class*="bg-slate"]');
-    expect(sidebar).toBeInTheDocument();
+    // Check that sidebar exists (aside element)
+    const sidebar = container.querySelector('aside');
+    expect(sidebar).toBeTruthy();
+    
+    // Verify sidebar has inline gradient styling
+    if (sidebar) {
+      const style = window.getComputedStyle(sidebar);
+      expect(style.background).toContain('linear-gradient');
+    }
   });
 });
