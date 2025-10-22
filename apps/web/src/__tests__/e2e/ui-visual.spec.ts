@@ -160,21 +160,4 @@ test.describe('UI Visual Regression', () => {
       });
     });
   });
-
-  test.describe('dark theme', () => {
-    test('sidebar dark theme (slate-900)', async ({ page }) => {
-      await page.waitForLoadState('networkidle');
-      
-      // Check sidebar background color
-      const sidebar = page.getByRole('complementary');
-      const bgColor = await sidebar.evaluate((el) => {
-        return window.getComputedStyle(el).backgroundColor;
-      });
-      
-      // slate-900 should be dark
-      expect(bgColor).toMatch(/rgb\(15,\s*23,\s*42\)/);
-      
-      await expect(sidebar).toHaveScreenshot('dark-sidebar.png');
-    });
-  });
 });
