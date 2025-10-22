@@ -83,7 +83,8 @@ export default function Chat({ conversationId, model }: ChatProps) {
         content: result.text,
         createdAt: Date.now(),
         conversationId,
-        usage: result.usageActual
+        usage: result.usageActual,
+        reasoning_details: result.reasoningDetails
       };
 
       setMessages(prev => [...prev, assistantMessage]);

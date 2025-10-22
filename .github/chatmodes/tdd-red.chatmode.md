@@ -5,7 +5,7 @@ handoffs:
     agent: tdd-green
     prompt: Make it pass
     send: true
-tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests']
+tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'runCommands/runInTerminal']
 ---
 
 Make sure Executable Test Spec `TDD.md` is in context.

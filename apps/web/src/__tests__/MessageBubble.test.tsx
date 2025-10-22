@@ -83,4 +83,27 @@ describe('MessageBubble Component', () => {
     const messageElement = screen.getByText(/This is a very long message/);
     expect(messageElement).toBeInTheDocument();
   });
+
+  it('renders ReasoningDisplay when message has reasoning_details', () => {
+    const messageWithReasoning: Message = {
+      ...baseMessage,
+      role: 'assistant',
+      content: 'The answer is 42.',
+      reasoning_details: [
+        {
+          type: 'reasoning.text',
+          text: 'Let me think through this step by step...',
+          signature: null,
+          id: 'reason-1',
+          format: 'xai-responses-v1',
+          index: 0
+        }
+      ]
+    };
+
+    render(<MessageBubble message={messageWithReasoning} />);
+
+    // Should render ReasoningDisplay component
+    expect(screen.getByText(/thinking/i)).toBeInTheDocument();
+  });
 });
