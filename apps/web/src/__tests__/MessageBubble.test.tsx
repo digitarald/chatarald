@@ -88,7 +88,6 @@ describe('MessageBubble Component', () => {
     const messageWithReasoning: Message = {
       ...baseMessage,
       role: 'assistant',
-      content: 'The answer is 42.',
       reasoning_details: [
         {
           type: 'reasoning.text',
@@ -103,7 +102,34 @@ describe('MessageBubble Component', () => {
 
     render(<MessageBubble message={messageWithReasoning} />);
 
-    // Should render ReasoningDisplay component with reasoning text
-    expect(screen.getByText(/step by step/i)).toBeInTheDocument();
+    // Should render reasoning section with the reasoning text
+    expect(screen.getByText(/Let me think through this step by step/)).toBeInTheDocument();
+    // Should have a collapsible trigger button (from Radix Collapsible)
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('does not render ReasoningDisplay when reasoning_details is undefined', () => {
+    const messageWithoutReasoning: Message = {
+      ...baseMessage,
+      role: 'assistant',
+    };
+
+    render(<MessageBubble message={messageWithoutReasoning} />);
+
+    // Should not have reasoning content
+    expect(screen.queryByText(/step by step/)).not.toBeInTheDocument();
+  });
+
+  it('does not render ReasoningDisplay when reasoning_details is empty array', () => {
+    const messageWithEmptyReasoning: Message = {
+      ...baseMessage,
+      role: 'assistant',
+      reasoning_details: []
+    };
+
+    render(<MessageBubble message={messageWithEmptyReasoning} />);
+
+    // Should not have reasoning section
+    expect(screen.queryByText(/reasoning/i)).not.toBeInTheDocument();
   });
 });

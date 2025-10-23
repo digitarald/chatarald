@@ -4,13 +4,12 @@
 
 ## Test List (Next)
 
-- [ ] Install Collapsible component from shadcn/ui
-- [ ] ReasoningDisplay component renders reasoning_details array
-- [ ] MessageBubble shows ReasoningDisplay when reasoning_details present
-- [ ] ReasoningDisplay starts open, collapses when message.content arrives
+- [x] Chat component passes reasoning_details from ChatResult to Message when saving
+- [x] **IN PROGRESS** - MessageBubble renders ReasoningDisplay when message has reasoning_details
+- [ ] ReasoningDisplay shows all reasoning details uniformly (no visual distinction between types)
+- [ ] Collapsible starts open, then collapses when content arrives
 - [ ] Chat component has reasoning effort toggle (high/medium/low pills)
-- [ ] Chat passes reasoning effort to OpenRouterDriver
-- [ ] Message storage persists reasoning_details to IndexedDB
+- [ ] Chat passes reasoning effort to OpenRouterDriver.chat()
 
 ## Edge Cases / Invariants
 
