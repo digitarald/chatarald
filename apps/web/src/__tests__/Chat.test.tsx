@@ -29,7 +29,9 @@ describe('Chat Component', () => {
 
     // Check that main elements are present
     expect(screen.getByPlaceholderText(/type your message/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '' })).toBeInTheDocument(); // Icon-only button
+    const submitButton = screen.getByRole('button', { name: '' });
+    expect(submitButton).toBeInTheDocument(); // Icon-only submit button
+    expect(submitButton).toHaveAttribute('type', 'submit');
   });
 
   it('displays existing messages with MessageBubble components', async () => {
@@ -67,7 +69,7 @@ describe('Chat Component', () => {
     render(<Chat conversationId="test-123" model="openai/gpt-4o" />);
 
     const input = screen.getByPlaceholderText(/type your message/i);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: '' }); // Submit button (icon-only)
 
     expect(input).not.toBeDisabled();
     expect(button).toBeDisabled(); // Disabled when input is empty
@@ -81,7 +83,7 @@ describe('Chat Component', () => {
     render(<Chat conversationId="test-123" model="openai/gpt-4o" />);
 
     const input = screen.getByPlaceholderText(/type your message/i);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: '' }); // Submit button
 
     await user.type(input, 'Hello world');
     
@@ -114,7 +116,7 @@ describe('Chat Component', () => {
     render(<Chat conversationId="test-123" model="openrouter:grok-2-1212" />);
 
     const input = screen.getByPlaceholderText(/type your message/i);
-    const button = screen.getByRole('button');
+    const button = screen.getByRole('button', { name: '' }); // Submit button
 
     await user.type(input, 'Solve this step by step');
     await user.click(button);
@@ -133,5 +135,31 @@ describe('Chat Component', () => {
     expect(assistantMessageCall).toBeDefined();
     expect(assistantMessageCall![0].reasoning_details).toBeDefined();
     expect(Array.isArray(assistantMessageCall![0].reasoning_details)).toBe(true);
+  });
+
+  it('has reasoning effort toggle with three pill buttons', async () => {
+    render(<Chat conversationId="test-123" model="openai/gpt-4o" />);
+
+    // Find all three effort buttons
+    const highBtn = screen.getByRole('button', { name: 'High' });
+    const mediumBtn = screen.getByRole('button', { name: 'Medium' });
+    const lowBtn = screen.getByRole('button', { name: 'Low' });
+
+    // Initially all unselected (no default effort)
+    expect(highBtn).toHaveAttribute('data-active', 'false');
+    expect(mediumBtn).toHaveAttribute('data-active', 'false');
+    expect(lowBtn).toHaveAttribute('data-active', 'false');
+
+    // Click medium button
+    await userEvent.click(mediumBtn);
+    expect(mediumBtn).toHaveAttribute('data-active', 'true');
+    expect(highBtn).toHaveAttribute('data-active', 'false');
+    expect(lowBtn).toHaveAttribute('data-active', 'false');
+
+    // Click low button (should deselect medium)
+    await userEvent.click(lowBtn);
+    expect(lowBtn).toHaveAttribute('data-active', 'true');
+    expect(mediumBtn).toHaveAttribute('data-active', 'false');
+    expect(highBtn).toHaveAttribute('data-active', 'false');
   });
 });

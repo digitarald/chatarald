@@ -1,5 +1,6 @@
 ---
 description: TDD Refactoring phase
+argument-hint: Pick a refactor to perform or say "start"
 handoffs: 
   - label: 🟥 Next test
     agent: tdd-red

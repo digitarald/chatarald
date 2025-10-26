@@ -7,8 +7,8 @@
 - [x] Chat component passes reasoning_details from ChatResult to Message when saving
 - [x] MessageBubble wraps ReasoningDisplay in Radix Collapsible with toggle button
 - [x] Collapsible starts open, then collapses when content arrives
-- [ ] **IN PROGRESS** - Chat component has reasoning effort toggle (high/medium/low pills)
-- [ ] Chat passes reasoning effort to OpenRouterDriver.chat()
+- [x] Chat component has reasoning effort toggle (high/medium/low pills)
+- [ ] **IN PROGRESS** - Chat passes reasoning effort to OpenRouterDriver.chat()
 
 ## Edge Cases / Invariants
 
@@ -109,3 +109,10 @@ interface ChatResult {
   - Added useEffect with 50ms timer to auto-collapse when message.content exists and not loading
   - Test verifies data-state changes from "open" to "closed"
   - All 10 MessageBubble tests passing, 42 total tests passing
+- ✅ **Chat component has reasoning effort toggle (high/medium/low pills)** (Oct 25, 18:45)
+  - Added ReasoningEffort state to Chat component (starts undefined for no default)
+  - Rendered three pill buttons (High, Medium, Low) above textarea
+  - Click handler sets selected effort with mutually exclusive selection
+  - data-active attribute tracks selection state for testing
+  - Pill styling with rounded-full, conditional bg colors (teal for active, slate for inactive)
+  - All 7 Chat tests passing, 43 total tests passing

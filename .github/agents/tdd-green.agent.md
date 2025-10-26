@@ -1,5 +1,6 @@
 ---
 description: TDD Green phase
+argument-hint: Pick a test to implement or just "next"
 handoffs: 
   - label: 🟥 Next test
     agent: tdd-red

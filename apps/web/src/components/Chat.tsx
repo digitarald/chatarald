@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Message, ModelId } from '@example/types';
+import type { ReasoningEffort } from '@example/llm';
 import { OpenRouterDriver } from '@example/llm';
 import { useTokenCount } from '../hooks/useTokenCount';
 import { saveMessage, getMessages } from '../store/conversations';
@@ -19,6 +20,7 @@ export default function Chat({ conversationId, model }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [reasoningEffort, setReasoningEffort] = useState<ReasoningEffort | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { estimate, actual, setEstimateTokens, setActualUsage, reset } = useTokenCount();
 
@@ -151,6 +153,26 @@ export default function Chat({ conversationId, model }: ChatProps) {
         }}
       >
         <div className="relative h-full max-w-4xl mx-auto">
+          {/* Reasoning Effort Toggle */}
+          <div className="absolute top-3 left-4 md:left-6 flex gap-2">
+            {(['high', 'medium', 'low'] as const).map((effort) => (
+              <button
+                key={effort}
+                type="button"
+                onClick={() => setReasoningEffort(effort)}
+                data-active={reasoningEffort === effort}
+                className={cn(
+                  'px-3 py-1 text-xs font-medium rounded-full transition-all',
+                  reasoningEffort === effort
+                    ? 'bg-teal-500 text-white shadow-sm'
+                    : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                )}
+              >
+                {effort.charAt(0).toUpperCase() + effort.slice(1)}
+              </button>
+            ))}
+          </div>
+
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}

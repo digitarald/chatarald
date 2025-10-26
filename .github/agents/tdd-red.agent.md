@@ -1,5 +1,6 @@
 ---
 description: TDD Red phase
+argument-hint: Specify a test to add or just "next"
 handoffs: 
   - label: 🟩 Implement
     agent: tdd-green
