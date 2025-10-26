@@ -6,8 +6,8 @@
 
 - [x] Chat component passes reasoning_details from ChatResult to Message when saving
 - [x] MessageBubble wraps ReasoningDisplay in Radix Collapsible with toggle button
-- [ ] **IN PROGRESS** - Collapsible starts open, then collapses when content arrives
-- [ ] Chat component has reasoning effort toggle (high/medium/low pills)
+- [x] Collapsible starts open, then collapses when content arrives
+- [ ] **IN PROGRESS** - Chat component has reasoning effort toggle (high/medium/low pills)
 - [ ] Chat passes reasoning effort to OpenRouterDriver.chat()
 
 ## Edge Cases / Invariants
@@ -103,3 +103,9 @@ interface ChatResult {
   - CollapsibleTrigger renders button with chevron icon and "Reasoning" label
   - Collapsible starts open by default (defaultOpen prop)
   - All 9 MessageBubble tests passing
+- ✅ **Collapsible starts open, then collapses when content arrives** (Oct 25, 18:32)
+  - Converted Collapsible from uncontrolled (defaultOpen) to controlled (open prop)
+  - Added useState to track isReasoningOpen state (starts true)
+  - Added useEffect with 50ms timer to auto-collapse when message.content exists and not loading
+  - Test verifies data-state changes from "open" to "closed"
+  - All 10 MessageBubble tests passing, 42 total tests passing

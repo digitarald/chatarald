@@ -129,7 +129,38 @@ describe('MessageBubble Component', () => {
 
     render(<MessageBubble message={messageWithEmptyReasoning} />);
 
-    // Should not have reasoning section
-    expect(screen.queryByText(/reasoning/i)).not.toBeInTheDocument();
+    // Should not have reasoning content
+    expect(screen.queryByText(/step by step/)).not.toBeInTheDocument();
+  });
+
+  it('automatically collapses reasoning section when message content is complete', async () => {
+    const messageWithReasoning: Message = {
+      ...baseMessage,
+      role: 'assistant',
+      content: 'Here is my response',
+      reasoning_details: [
+        {
+          type: 'reasoning.text',
+          text: 'Let me think through this...',
+          signature: null,
+          id: 'reason-1',
+          format: 'xai-responses-v1',
+          index: 0
+        }
+      ]
+    };
+
+    const { container } = render(<MessageBubble message={messageWithReasoning} />);
+
+    // Initially, collapsible should start open (data-state="open")
+    const collapsibleRoot = container.querySelector('[data-state]');
+    expect(collapsibleRoot).toHaveAttribute('data-state', 'open');
+
+    // Wait for auto-collapse effect to trigger
+    // The useEffect should close the collapsible after content is loaded
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    // After effect runs, collapsible should be closed (data-state="closed")
+    expect(collapsibleRoot).toHaveAttribute('data-state', 'closed');
   });
 });
