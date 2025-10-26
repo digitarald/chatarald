@@ -131,4 +131,40 @@ describe('App Component', () => {
       expect(style.background).toContain('linear-gradient');
     }
   });
+
+  it('shows delete button when hovering over a conversation item', async () => {
+    // Arrange
+    const user = userEvent.setup();
+    const { getConversations } = await import('@/store/conversations');
+    vi.mocked(getConversations).mockResolvedValueOnce([
+      {
+        id: '1',
+        title: 'Chat 1',
+        model: 'openrouter:gpt-4o',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: '2',
+        title: 'Chat 2',
+        model: 'openrouter:claude-3.7',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ]);
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Chat 1')).toBeInTheDocument();
+    });
+
+    // Act
+    const conversationButton = screen.getByText('Chat 1').closest('button');
+    await user.hover(conversationButton!);
+
+    // Assert
+    const deleteButton = screen.getByRole('button', { name: /delete chat 1/i });
+    expect(deleteButton).toBeVisible();
+  });
 });

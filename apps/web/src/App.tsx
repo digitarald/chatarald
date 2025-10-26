@@ -5,7 +5,7 @@ import { getConversations, saveConversation } from './store/conversations';
 import { Button } from './components/ui/button';
 import { ScrollArea } from './components/ui/scroll-area';
 import { Separator } from './components/ui/separator';
-import { Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { cn } from './lib/utils';
 
 const DEFAULT_MODEL: ModelId = (import.meta.env.VITE_DEFAULT_MODEL || 'openrouter:x-ai/grok-2-1212') as ModelId;
@@ -104,7 +104,7 @@ export default function App() {
                       setCurrentConversationId(conv.id);
                     }}
                     className={cn(
-                      'px-3 py-2.5 rounded-md text-sm text-left transition-all',
+                      'group relative px-3 py-2.5 rounded-md text-sm text-left transition-all',
                       'hover:bg-slate-700',
                       conv.id === currentConversationId
                         ? 'bg-accent text-white active'
@@ -112,7 +112,16 @@ export default function App() {
                     )}
                     data-active={conv.id === currentConversationId}
                   >
-                    {conv.title}
+                    <span>{conv.title}</span>
+                    <button
+                      aria-label={`Delete ${conv.title}`}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-500/20 transition-all"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-400" />
+                    </button>
                   </button>
                 ))}
               </div>
