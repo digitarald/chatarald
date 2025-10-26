@@ -8,7 +8,11 @@
 - [x] MessageBubble wraps ReasoningDisplay in Radix Collapsible with toggle button
 - [x] Collapsible starts open, then collapses when content arrives
 - [x] Chat component has reasoning effort toggle (high/medium/low pills)
-- [ ] **IN PROGRESS** - Chat passes reasoning effort to OpenRouterDriver.chat()
+- [x] Chat passes reasoning effort to OpenRouterDriver.chat()
+
+## Feature Complete! 🎉
+
+All planned tests have been implemented and are passing. The reasoning details display feature is now fully functional.
 
 ## Edge Cases / Invariants
 
@@ -116,3 +120,10 @@ interface ChatResult {
   - data-active attribute tracks selection state for testing
   - Pill styling with rounded-full, conditional bg colors (teal for active, slate for inactive)
   - All 7 Chat tests passing, 43 total tests passing
+- ✅ **Chat passes reasoning effort to OpenRouterDriver.chat()** (Oct 25, 18:52)
+  - Added reasoning parameter to OpenRouterDriver.chat() call in handleSubmit
+  - Uses conditional spread operator: `...(reasoningEffort && { reasoning: { effort: reasoningEffort } })`
+  - When reasoningEffort is defined, passes `reasoning: { effort: value }`
+  - When undefined, omits the reasoning parameter entirely
+  - Test verifies the driver is called with correct reasoning effort
+  - All 8 Chat tests passing, 44 total tests passing

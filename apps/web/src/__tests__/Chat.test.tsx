@@ -3,6 +3,23 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Chat from '@/components/Chat';
 
+// Mock OpenRouterDriver
+vi.mock('@example/llm', async () => {
+  const actual = await vi.importActual('@example/llm');
+  return {
+    ...actual,
+    OpenRouterDriver: {
+      chat: vi.fn().mockResolvedValue({
+        text: 'test response',
+        usageEstimate: { promptTokens: 10 },
+        usageActual: { promptTokens: 10, completionTokens: 5, totalTokens: 15 },
+        reasoningDetails: []
+      }),
+      estimateTokens: vi.fn().mockResolvedValue({ promptTokens: 10 })
+    }
+  };
+});
+
 // Mock the store
 vi.mock('@/store/conversations', () => ({
   saveMessage: vi.fn(),
@@ -161,5 +178,31 @@ describe('Chat Component', () => {
     expect(lowBtn).toHaveAttribute('data-active', 'true');
     expect(mediumBtn).toHaveAttribute('data-active', 'false');
     expect(highBtn).toHaveAttribute('data-active', 'false');
+  });
+
+  it('passes reasoning effort to OpenRouterDriver.chat()', async () => {
+    const user = userEvent.setup();
+    const { OpenRouterDriver } = await import('@example/llm');
+    const chatSpy = vi.mocked(OpenRouterDriver.chat);
+    chatSpy.mockClear();
+
+    render(<Chat conversationId="test-123" model="openai/gpt-4o" />);
+
+    // Select medium effort
+    await user.click(screen.getByRole('button', { name: 'Medium' }));
+
+    // Type and send message
+    const input = screen.getByPlaceholderText(/type your message/i);
+    await user.type(input, 'Test message');
+    await user.click(screen.getByRole('button', { name: '' })); // Submit button
+
+    // Assert OpenRouterDriver.chat was called with reasoning effort
+    await waitFor(() => {
+      expect(chatSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          reasoning: { effort: 'medium' }
+        })
+      );
+    });
   });
 });

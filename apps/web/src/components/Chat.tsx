@@ -76,7 +76,8 @@ export default function Chat({ conversationId, model }: ChatProps) {
           role: m.role,
           content: m.content
         })),
-        apiKey
+        apiKey,
+        ...(reasoningEffort && { reasoning: { effort: reasoningEffort } })
       });
 
       const assistantMessage: Message = {
