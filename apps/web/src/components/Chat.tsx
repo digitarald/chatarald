@@ -155,13 +155,14 @@ export default function Chat({ conversationId, model }: ChatProps) {
       >
         <div className="relative h-full max-w-4xl mx-auto">
           {/* Reasoning Effort Toggle */}
-          <div className="absolute top-3 left-4 md:left-6 flex gap-2">
+          <div className="absolute top-3 left-4 md:left-6 flex gap-2" role="group" aria-label="Reasoning effort">
             {(['high', 'medium', 'low'] as const).map((effort) => (
               <button
                 key={effort}
                 type="button"
                 onClick={() => setReasoningEffort(effort)}
                 data-active={reasoningEffort === effort}
+                aria-pressed={reasoningEffort === effort}
                 className={cn(
                   'px-3 py-1 text-xs font-medium rounded-full transition-all',
                   reasoningEffort === effort

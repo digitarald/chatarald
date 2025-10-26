@@ -87,7 +87,12 @@ export function MessageBubble({ message, isLoading }: MessageBubbleProps) {
         {message.reasoning_details && message.reasoning_details.length > 0 && (
           <Collapsible open={isReasoningOpen} onOpenChange={setIsReasoningOpen}>
             <CollapsibleTrigger className="flex items-center gap-1 mt-3 text-xs opacity-60 hover:opacity-100 transition-opacity">
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown
+                className={cn(
+                  'h-3 w-3 transition-transform duration-200',
+                  isReasoningOpen && 'rotate-180'
+                )}
+              />
               <span>Reasoning</span>
             </CollapsibleTrigger>
             <CollapsibleContent>
