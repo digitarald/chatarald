@@ -154,20 +154,24 @@ export default function Chat({ conversationId, model }: ChatProps) {
         }}
       >
         <div className="relative h-full max-w-4xl mx-auto">
-          {/* Reasoning Effort Toggle */}
-          <div className="absolute top-3 left-4 md:left-6 flex gap-2" role="group" aria-label="Reasoning effort">
+          {/* Reasoning Effort Toggle - Segmented Control */}
+          <div
+            className="absolute top-3 left-4 md:left-6 inline-flex rounded-full bg-slate-200 p-0.5 gap-0"
+            role="group"
+            aria-label="Reasoning effort"
+          >
             {(['high', 'medium', 'low'] as const).map((effort) => (
               <button
                 key={effort}
                 type="button"
-                onClick={() => setReasoningEffort(effort)}
+                onClick={() => setReasoningEffort(reasoningEffort === effort ? undefined : effort)}
                 data-active={reasoningEffort === effort}
                 aria-pressed={reasoningEffort === effort}
                 className={cn(
-                  'px-3 py-1 text-xs font-medium rounded-full transition-all',
+                  'px-3 py-1.5 text-xs font-medium transition-all rounded-full',
                   reasoningEffort === effort
                     ? 'bg-teal-500 text-white shadow-sm'
-                    : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                    : 'text-slate-600 hover:text-slate-900'
                 )}
               >
                 {effort.charAt(0).toUpperCase() + effort.slice(1)}

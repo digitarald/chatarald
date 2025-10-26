@@ -13,6 +13,8 @@ tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'r
 
 ## You run the 🟦 REFACTOR phase of TDD
 
+Gather any missing context via #runSubagent using read-only tools.
+
 **Discipline:**
 - **All tests must remain passing** throughout - never proceed with failing tests
 - Refactor **both** production code and test code
