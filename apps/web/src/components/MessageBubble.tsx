@@ -2,9 +2,11 @@ import React from 'react';
 import type { Message } from '@example/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { TypingIndicator } from './TypingIndicator';
 import { ReasoningDisplay } from './ReasoningDisplay';
 import { cn } from '@/lib/utils';
+import { ChevronDown } from 'lucide-react';
 
 interface MessageBubbleProps {
   message: Message | null;
@@ -71,8 +73,16 @@ export function MessageBubble({ message, isLoading }: MessageBubbleProps) {
           {message.content}
         </p>
 
-        {message.reasoning_details && (
-          <ReasoningDisplay details={message.reasoning_details} />
+        {message.reasoning_details && message.reasoning_details.length > 0 && (
+          <Collapsible defaultOpen>
+            <CollapsibleTrigger className="flex items-center gap-1 mt-3 text-xs opacity-60 hover:opacity-100 transition-opacity">
+              <ChevronDown className="h-3 w-3" />
+              <span>Reasoning</span>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <ReasoningDisplay details={message.reasoning_details} />
+            </CollapsibleContent>
+          </Collapsible>
         )}
 
         {message.usage && (

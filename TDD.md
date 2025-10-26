@@ -5,9 +5,8 @@
 ## Test List (Next)
 
 - [x] Chat component passes reasoning_details from ChatResult to Message when saving
-- [x] **IN PROGRESS** - MessageBubble renders ReasoningDisplay when message has reasoning_details
-- [ ] ReasoningDisplay shows all reasoning details uniformly (no visual distinction between types)
-- [ ] Collapsible starts open, then collapses when content arrives
+- [x] MessageBubble wraps ReasoningDisplay in Radix Collapsible with toggle button
+- [ ] **IN PROGRESS** - Collapsible starts open, then collapses when content arrives
 - [ ] Chat component has reasoning effort toggle (high/medium/low pills)
 - [ ] Chat passes reasoning effort to OpenRouterDriver.chat()
 
@@ -91,3 +90,16 @@ interface ChatResult {
   - Added optional reasoning field to ChatRequest
   - Pass reasoning parameter to OpenAI SDK
   - Test validates parameter is sent in request body
+- ✅ **MessageBubble renders ReasoningDisplay when message has reasoning_details** (Oct 25, 11:32)
+  - MessageBubble conditionally renders ReasoningDisplay component
+  - Test verifies reasoning content appears in DOM
+- ✅ **ReasoningDisplay shows all reasoning details uniformly (no visual distinction between types)** (Oct 25, 11:35)
+  - All three types render with identical CSS classes
+  - Test validates uniform styling across summary, text, and encrypted types
+  - Encrypted type shows placeholder text
+- ✅ **MessageBubble wraps ReasoningDisplay in Radix Collapsible with toggle button** (Oct 25, 18:25)
+  - Installed @radix-ui/react-collapsible and created shadcn UI wrapper
+  - MessageBubble wraps reasoning section in Collapsible component
+  - CollapsibleTrigger renders button with chevron icon and "Reasoning" label
+  - Collapsible starts open by default (defaultOpen prop)
+  - All 9 MessageBubble tests passing
