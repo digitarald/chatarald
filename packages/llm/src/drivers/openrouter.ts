@@ -28,7 +28,7 @@ export const OpenRouterDriver: LlmDriver = {
     
     const modelId = input.model.replace('openrouter:', '');
     
-    const requestBody: any = {
+    const completion = await client.chat.completions.create({
       model: modelId,
       messages: [
         { role: 'system', content: input.system ?? DEFAULT_SYSTEM_PROMPT },
@@ -36,22 +36,13 @@ export const OpenRouterDriver: LlmDriver = {
           role: m.role as 'user' | 'assistant',
           content: m.content
         }))
-      ]
-    };
-
-    // Add reasoning parameter if provided
-    if (input.reasoning) {
-      requestBody.reasoning = input.reasoning;
-    }
-    
-    const completion = await client.chat.completions.create(requestBody);
+      ],
+      ...(input.reasoning && { reasoning: input.reasoning })
+    });
 
     const message = completion.choices[0]?.message;
     const usage = completion.usage;
     const reasoningDetails = (message as any)?.reasoning_details;
-    
-    console.log('Driver received message:', message);
-    console.log('Driver extracted reasoningDetails:', reasoningDetails);
 
     return {
       text: message?.content || '',

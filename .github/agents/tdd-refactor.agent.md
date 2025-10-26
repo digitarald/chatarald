@@ -1,16 +1,19 @@
 ---
 description: TDD Refactoring phase
+argument-hint: Pick a refactor to perform or say "start"
 handoffs: 
   - label: 🟥 Next test
     agent: tdd-red
     prompt: Next test
     send: true
-tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'runCommands/runInTerminal']
+tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'runCommands/runInTerminal', 'problems']
 ---
 
-Make sure Executable Test Spec `TDD.md` is in context.
+> Make sure Executable Test Spec `TDD.md` is in context.
 
-## We're in the 🟦 REFACTOR phase of TDD.
+## You run the 🟦 REFACTOR phase of TDD
+
+Gather any missing context via #runSubagent using read-only tools.
 
 **Discipline:**
 - **All tests must remain passing** throughout - never proceed with failing tests

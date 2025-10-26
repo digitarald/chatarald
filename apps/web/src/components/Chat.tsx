@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { Message, ModelId } from '@example/types';
+import type { ReasoningEffort } from '@example/llm';
 import { OpenRouterDriver } from '@example/llm';
 import { useTokenCount } from '../hooks/useTokenCount';
 import { saveMessage, getMessages } from '../store/conversations';
@@ -19,6 +20,7 @@ export default function Chat({ conversationId, model }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [reasoningEffort, setReasoningEffort] = useState<ReasoningEffort | undefined>(undefined);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { estimate, actual, setEstimateTokens, setActualUsage, reset } = useTokenCount();
 
@@ -74,7 +76,8 @@ export default function Chat({ conversationId, model }: ChatProps) {
           role: m.role,
           content: m.content
         })),
-        apiKey
+        apiKey,
+        ...(reasoningEffort && { reasoning: { effort: reasoningEffort } })
       });
 
       const assistantMessage: Message = {
@@ -142,7 +145,7 @@ export default function Chat({ conversationId, model }: ChatProps) {
       {/* Input Form - Glass Morphism */}
       <form
         onSubmit={handleSubmit}
-        className="border-t border-border/50 relative h-32 md:h-40"
+        className="border-t border-border/50 flex flex-col relative h-32 md:h-40"
         style={{
           background: 'linear-gradient(to bottom, rgba(255,255,255,0.6), rgba(255,255,255,0.8))',
           backdropFilter: 'blur(30px) saturate(180%)',
@@ -150,36 +153,62 @@ export default function Chat({ conversationId, model }: ChatProps) {
           boxShadow: '0 -2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8)'
         }}
       >
-        <div className="relative h-full max-w-4xl mx-auto">
-          <textarea
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={e => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSubmit(e as any);
-              }
-            }}
-            placeholder="Type your message..."
-            disabled={isLoading}
-            className={cn(
-              "w-full h-full resize-none border-0 outline-none",
-              "bg-transparent px-4 md:px-6 py-4 md:py-5 pr-16 md:pr-20",
-              "text-sm md:text-base leading-relaxed",
-              "placeholder:text-slate-400",
-              "focus:outline-none focus:ring-0",
-              "disabled:opacity-50 disabled:cursor-not-allowed"
-            )}
-            style={{
-              fontFamily: 'inherit'
-            }}
-          />
+        <textarea
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e as any);
+            }
+          }}
+          placeholder="Type your message..."
+          disabled={isLoading}
+          className={cn(
+            "flex-1 resize-none border-0 outline-none",
+            "bg-transparent px-4 md:px-6 py-4 md:py-5",
+            "text-sm md:text-base leading-relaxed",
+            "placeholder:text-slate-400",
+            "focus:outline-none focus:ring-0",
+            "disabled:opacity-50 disabled:cursor-not-allowed"
+          )}
+          style={{
+            fontFamily: 'inherit'
+          }}
+        />
+        
+        {/* Bottom Row - Reasoning Effort Toggle + Submit Button */}
+        <div className="relative h-full max-w-4xl mx-auto w-full flex items-end justify-between px-4 md:px-6 pb-3 md:pb-4">
+          {/* Reasoning Effort Toggle - Segmented Control */}
+          <div
+            className="inline-flex rounded-full bg-slate-200 p-0.5 gap-0"
+            role="group"
+            aria-label="Reasoning effort"
+          >
+            {(['high', 'medium', 'low'] as const).map((effort) => (
+              <button
+                key={effort}
+                type="button"
+                onClick={() => setReasoningEffort(reasoningEffort === effort ? undefined : effort)}
+                data-active={reasoningEffort === effort}
+                aria-pressed={reasoningEffort === effort}
+                className={cn(
+                  'px-3 py-1.5 text-xs font-medium transition-all rounded-full',
+                  reasoningEffort === effort
+                    ? 'bg-teal-500 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                )}
+              >
+                {effort.charAt(0).toUpperCase() + effort.slice(1)}
+              </button>
+            ))}
+          </div>
+
           <Button
             type="submit"
             disabled={isLoading || !input.trim()}
             size="icon"
             className={cn(
-              'absolute bottom-4 md:bottom-5 right-4 md:right-6',
               'h-10 w-10 md:h-12 md:w-12 rounded-full',
               'transition-all duration-300 shadow-md',
               'bg-gradient-to-br from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600',

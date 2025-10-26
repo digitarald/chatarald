@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import type { Message } from '@example/types';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/collapsible';
 import { TypingIndicator } from './TypingIndicator';
 import { ReasoningDisplay } from './ReasoningDisplay';
 import { cn } from '@/lib/utils';
+import { ChevronDown } from 'lucide-react';
 
 interface MessageBubbleProps {
   message: Message | null;
@@ -12,6 +14,17 @@ interface MessageBubbleProps {
 }
 
 export function MessageBubble({ message, isLoading }: MessageBubbleProps) {
+  const [isReasoningOpen, setIsReasoningOpen] = useState(true);
+
+  useEffect(() => {
+    if (message?.content && !isLoading) {
+      const timer = setTimeout(() => {
+        setIsReasoningOpen(false);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [message?.content, isLoading]);
+
   if (isLoading || !message) {
     return (
       <div className="flex gap-3 animate-fade-in">
@@ -71,8 +84,21 @@ export function MessageBubble({ message, isLoading }: MessageBubbleProps) {
           {message.content}
         </p>
 
-        {message.reasoning_details && (
-          <ReasoningDisplay details={message.reasoning_details} />
+        {message.reasoning_details && message.reasoning_details.length > 0 && (
+          <Collapsible open={isReasoningOpen} onOpenChange={setIsReasoningOpen}>
+            <CollapsibleTrigger className="flex items-center gap-1 mt-3 text-xs opacity-60 hover:opacity-100 transition-opacity">
+              <ChevronDown
+                className={cn(
+                  'h-3 w-3 transition-transform duration-200',
+                  isReasoningOpen && 'rotate-180'
+                )}
+              />
+              <span>Reasoning</span>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <ReasoningDisplay details={message.reasoning_details} />
+            </CollapsibleContent>
+          </Collapsible>
         )}
 
         {message.usage && (

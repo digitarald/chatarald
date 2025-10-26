@@ -71,28 +71,10 @@ describe('OpenRouterDriver', () => {
       expect(result.text).toBeTruthy();
     });
 
-    it('should extract reasoning_details from API response when present', async () => {
-      const result = await OpenRouterDriver.chat({
-        model: 'openrouter:grok-2-1212',
-        messages: [{ role: 'user', content: 'Solve this problem step by step' }]
-      });
-
-      expect(result.reasoningDetails).toBeDefined();
-      expect(Array.isArray(result.reasoningDetails)).toBe(true);
-      expect(result.reasoningDetails!.length).toBeGreaterThan(0);
-      
-      const firstDetail = result.reasoningDetails![0];
-      expect(firstDetail.type).toMatch(/^reasoning\.(summary|text|encrypted)$/);
-      expect(firstDetail.format).toBeDefined();
-    });
-
-    it('should send reasoning effort parameter when provided', async () => {
-      let capturedRequestBody: any;
-
-      // Temporarily override handler to capture request
+    it('should extract reasoning_details from response when present', async () => {
+      // Override mock to return reasoning_details
       server.use(
-        http.post('https://openrouter.ai/api/v1/chat/completions', async ({ request }) => {
-          capturedRequestBody = await request.json();
+        http.post('https://openrouter.ai/api/v1/chat/completions', async () => {
           return HttpResponse.json({
             id: 'chatcmpl-test',
             object: 'chat.completion',
@@ -102,14 +84,85 @@ describe('OpenRouterDriver', () => {
               index: 0,
               message: {
                 role: 'assistant',
-                content: 'Response with reasoning'
+                content: 'The answer is 4.',
+                reasoning_details: [
+                  {
+                    type: 'reasoning.summary',
+                    summary: 'I need to add 2 and 2',
+                    id: 'sum-1',
+                    format: 'xai-responses-v1',
+                    index: 0
+                  },
+                  {
+                    type: 'reasoning.text',
+                    text: 'Step 1: 2 + 2 = 4',
+                    signature: null,
+                    id: 'text-1',
+                    format: 'xai-responses-v1',
+                    index: 1
+                  }
+                ]
               },
               finish_reason: 'stop'
             }],
             usage: {
-              prompt_tokens: 50,
-              completion_tokens: 15,
-              total_tokens: 65
+              prompt_tokens: 20,
+              completion_tokens: 10,
+              total_tokens: 30
+            }
+          });
+        })
+      );
+
+      const result = await OpenRouterDriver.chat({
+        model: 'openrouter:grok-2-1212',
+        messages: [{ role: 'user', content: 'Solve 2+2' }]
+      });
+
+      expect(result.reasoningDetails).toBeDefined();
+      expect(result.reasoningDetails).toHaveLength(2);
+      
+      expect(result.reasoningDetails![0]).toEqual({
+        type: 'reasoning.summary',
+        summary: 'I need to add 2 and 2',
+        id: 'sum-1',
+        format: 'xai-responses-v1',
+        index: 0
+      });
+      
+      expect(result.reasoningDetails![1]).toEqual({
+        type: 'reasoning.text',
+        text: 'Step 1: 2 + 2 = 4',
+        signature: null,
+        id: 'text-1',
+        format: 'xai-responses-v1',
+        index: 1
+      });
+    });
+
+    it('should send reasoning effort parameter when provided', async () => {
+      let capturedRequest: any;
+      
+      server.use(
+        http.post('https://openrouter.ai/api/v1/chat/completions', async ({ request }) => {
+          capturedRequest = await request.json();
+          return HttpResponse.json({
+            id: 'chatcmpl-test',
+            object: 'chat.completion',
+            created: Date.now(),
+            model: 'grok-2-1212',
+            choices: [{
+              index: 0,
+              message: {
+                role: 'assistant',
+                content: 'Answer with reasoning.'
+              },
+              finish_reason: 'stop'
+            }],
+            usage: {
+              prompt_tokens: 20,
+              completion_tokens: 10,
+              total_tokens: 30
             }
           });
         })
@@ -117,13 +170,12 @@ describe('OpenRouterDriver', () => {
 
       await OpenRouterDriver.chat({
         model: 'openrouter:grok-2-1212',
-        messages: [{ role: 'user', content: 'Test' }],
+        messages: [{ role: 'user', content: 'Think hard' }],
         reasoning: { effort: 'high' }
       });
 
-      expect(capturedRequestBody).toBeDefined();
-      expect(capturedRequestBody.reasoning).toBeDefined();
-      expect(capturedRequestBody.reasoning.effort).toBe('high');
+      expect(capturedRequest).toBeDefined();
+      expect(capturedRequest.reasoning).toEqual({ effort: 'high' });
     });
   });
 });

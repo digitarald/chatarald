@@ -4,11 +4,15 @@
 
 ## Test List (Next)
 
-- [ ] MessageBubble renders ReasoningDisplay when message has reasoning_details
-- [ ] ReasoningDisplay shows all reasoning details uniformly (no visual distinction between types)
-- [ ] Collapsible starts open, then collapses when content arrives
-- [ ] Chat component has reasoning effort toggle (high/medium/low pills)
-- [ ] Chat passes reasoning effort to OpenRouterDriver.chat()
+- [x] Chat component passes reasoning_details from ChatResult to Message when saving
+- [x] MessageBubble wraps ReasoningDisplay in Radix Collapsible with toggle button
+- [x] Collapsible starts open, then collapses when content arrives
+- [x] Chat component has reasoning effort toggle (high/medium/low pills)
+- [x] Chat passes reasoning effort to OpenRouterDriver.chat()
+
+## Feature Complete! 🎉
+
+All planned tests have been implemented and are passing. The reasoning details display feature is now fully functional.
 
 ## Edge Cases / Invariants
 
@@ -81,24 +85,45 @@ interface ChatResult {
   - Added union type with reasoning.summary, reasoning.text, reasoning.encrypted variants
   - Added reasoning_details field to Message interface
   - All 5 type tests passing
-
-- ✅ **OpenRouterDriver extracts reasoning_details from API response** (Oct 21, 17:35)
+- ✅ **OpenRouterDriver extracts reasoning_details from API response** (Oct 21, 17:04)
   - Added reasoningDetails field to ChatResult interface
-  - Extract reasoning_details from message in API response
-  - Test validates extraction of reasoning array with correct types
-
-- ✅ **OpenRouterDriver sends reasoning effort parameter in request** (Oct 21, 17:39)
+  - Extract reasoning_details from message object in OpenAI SDK response
+  - Test with mocked response validates extraction of 2 reasoning blocks
+- ✅ **OpenRouterDriver sends reasoning effort parameter** (Oct 21, 17:06)
   - Added ReasoningEffort type ('high' | 'medium' | 'low')
-  - Added reasoning field to ChatRequest interface
-  - Driver conditionally includes reasoning parameter in API request
-  - Test captures and validates request body
-
-- ✅ **Chat passes reasoning_details from ChatResult to Message** (Oct 21, 21:55)
-  - Chat component extracts reasoningDetails from ChatResult
-  - Assigns reasoning_details field when creating assistant Message
-  - Message is saved with reasoning_details intact
-  - Test validates reasoning array is preserved through save
-
-- ✅ **Chat component passes reasoning_details from ChatResult to Message when saving** (Oct 21, 17:45)
-  - Added reasoning_details field to assistantMessage object in Chat.tsx
-  - Test validates reasoning_details is passed to saveMessage for grok models
+  - Added optional reasoning field to ChatRequest
+  - Pass reasoning parameter to OpenAI SDK
+  - Test validates parameter is sent in request body
+- ✅ **MessageBubble renders ReasoningDisplay when message has reasoning_details** (Oct 25, 11:32)
+  - MessageBubble conditionally renders ReasoningDisplay component
+  - Test verifies reasoning content appears in DOM
+- ✅ **ReasoningDisplay shows all reasoning details uniformly (no visual distinction between types)** (Oct 25, 11:35)
+  - All three types render with identical CSS classes
+  - Test validates uniform styling across summary, text, and encrypted types
+  - Encrypted type shows placeholder text
+- ✅ **MessageBubble wraps ReasoningDisplay in Radix Collapsible with toggle button** (Oct 25, 18:25)
+  - Installed @radix-ui/react-collapsible and created shadcn UI wrapper
+  - MessageBubble wraps reasoning section in Collapsible component
+  - CollapsibleTrigger renders button with chevron icon and "Reasoning" label
+  - Collapsible starts open by default (defaultOpen prop)
+  - All 9 MessageBubble tests passing
+- ✅ **Collapsible starts open, then collapses when content arrives** (Oct 25, 18:32)
+  - Converted Collapsible from uncontrolled (defaultOpen) to controlled (open prop)
+  - Added useState to track isReasoningOpen state (starts true)
+  - Added useEffect with 50ms timer to auto-collapse when message.content exists and not loading
+  - Test verifies data-state changes from "open" to "closed"
+  - All 10 MessageBubble tests passing, 42 total tests passing
+- ✅ **Chat component has reasoning effort toggle (high/medium/low pills)** (Oct 25, 18:45)
+  - Added ReasoningEffort state to Chat component (starts undefined for no default)
+  - Rendered three pill buttons (High, Medium, Low) above textarea
+  - Click handler sets selected effort with mutually exclusive selection
+  - data-active attribute tracks selection state for testing
+  - Pill styling with rounded-full, conditional bg colors (teal for active, slate for inactive)
+  - All 7 Chat tests passing, 43 total tests passing
+- ✅ **Chat passes reasoning effort to OpenRouterDriver.chat()** (Oct 25, 18:52)
+  - Added reasoning parameter to OpenRouterDriver.chat() call in handleSubmit
+  - Uses conditional spread operator: `...(reasoningEffort && { reasoning: { effort: reasoningEffort } })`
+  - When reasoningEffort is defined, passes `reasoning: { effort: value }`
+  - When undefined, omits the reasoning parameter entirely
+  - Test verifies the driver is called with correct reasoning effort
+  - All 8 Chat tests passing, 44 total tests passing

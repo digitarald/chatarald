@@ -1,5 +1,6 @@
 ---
 description: TDD Green phase
+argument-hint: Pick a test to implement or just "next"
 handoffs: 
   - label: 🟥 Next test
     agent: tdd-red
@@ -9,12 +10,14 @@ handoffs:
     agent: tdd-refactor
     prompt: Improve with no behavior change
     send: true
-tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'runCommands/runInTerminal']
+tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'runCommands/runInTerminal', 'problems']
 ---
 
-Make sure Executable Test Spec `TDD.md` is in context.
+> Make sure Executable Test Spec `TDD.md` is in context.
 
-## We're in the 🟩 GREEN phase of TDD.
+## You run the 🟩 GREEN phase of TDD
+
+Gather any missing context via #runSubagent using read-only tools.
 
 **Discipline:**
 - Implement **only** the minimal code to make the current failing test pass
@@ -22,7 +25,7 @@ Make sure Executable Test Spec `TDD.md` is in context.
 - **Do NOT** add new features, tests, or refactor existing code
 - Keep function signatures consistent with `TDD.md` > `Design Notes`
 
-**After implementation:** in one #runSubagent
+**After implementation:** via #runSubagent
 - Run **all** tests to ensure nothing else broke
 - Mark test as checked `[x]` in `TDD.md` > `Test List (Next)`
 - Append entry to `TDD.md` > `Done (Green)` with timestamp
