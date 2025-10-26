@@ -21,10 +21,8 @@ PROJECT DEVELOPMENT REQUIREMENTS:
 ## Development Workflow
 1. Write tests first (TDD)
 2. Run unit tests: `pnpm test` (Vitest watch mode)
-3. Run visual tests: `pnpm -w test:e2e` (Playwright, requires dev server)
-4. Update snapshots: `pnpm -w test:e2e -u` (after intentional UI changes)
-5. Dev server: `pnpm -w dev` (Vite at http://localhost:3000)
-6. Environment: Set `OPENROUTER_API_KEY` in workspace root `.env` for live calls
+3. Dev server: `pnpm -w dev` (Vite at http://localhost:3000)
+4. Environment: Set `OPENROUTER_API_KEY` in workspace root `.env` for live calls
 
 ### Styling (Tailwind v4)
 - No `tailwind.config.js` file—all theme config in `apps/web/src/index.css` via `@theme`
@@ -40,7 +38,6 @@ PROJECT DEVELOPMENT REQUIREMENTS:
 - OpenAI SDK (OpenRouter-compatible)
 - gpt-tokenizer, @anthropic-ai/tokenizer
 - Vitest, MSW, @testing-library/react
-- **Playwright** (@playwright/test) for visual regression
 - idb-keyval (IndexedDB wrapper)
 - **shadcn/ui** (Radix UI primitives): Button, Input, Select, Card, ScrollArea, Avatar, Separator, Skeleton
 - **Tailwind CSS v4** (@tailwindcss/vite plugin)
