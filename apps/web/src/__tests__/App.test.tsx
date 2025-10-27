@@ -272,5 +272,48 @@ describe('App Component', () => {
     const chat1Button = screen.getByText('Chat 1').closest('button');
     expect(chat1Button).toHaveAttribute('data-active', 'true');
   });
+
+  it('does not render delete buttons when sidebar is collapsed', async () => {
+    // Arrange
+    const user = userEvent.setup();
+    const { getConversations } = await import('@/store/conversations');
+    vi.mocked(getConversations).mockResolvedValueOnce([
+      {
+        id: '1',
+        title: 'Chat 1',
+        model: 'openrouter:gpt-4o',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+      {
+        id: '2',
+        title: 'Chat 2',
+        model: 'openrouter:claude-3.7',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ]);
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Chat 1')).toBeInTheDocument();
+    });
+
+    // Verify delete button exists before collapse
+    const chat1Button = screen.getByText('Chat 1').closest('button');
+    await user.hover(chat1Button!);
+    expect(screen.getByRole('button', { name: /delete chat 1/i })).toBeInTheDocument();
+
+    // Act - Collapse the sidebar
+    const collapseButton = screen.getByRole('button', { name: /collapse sidebar/i });
+    await user.click(collapseButton);
+
+    // Assert - Delete buttons should not exist in DOM
+    expect(screen.queryByText('Chat 1')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /delete chat 1/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /delete chat 2/i })).not.toBeInTheDocument();
+  });
 });
+
 
