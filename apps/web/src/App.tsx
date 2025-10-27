@@ -124,16 +124,25 @@ export default function App() {
                     data-active={conv.id === currentConversationId}
                   >
                     <span>{conv.title}</span>
-                    <button
+                    <div
+                      role="button"
+                      tabIndex={0}
                       aria-label={`Delete ${conv.title}`}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-500/20 transition-all"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-500/20 transition-all cursor-pointer"
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteConversation(conv.id);
                       }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDeleteConversation(conv.id);
+                        }
+                      }}
                     >
                       <Trash2 className="h-4 w-4 text-red-400" />
-                    </button>
+                    </div>
                   </button>
                 ))}
               </div>

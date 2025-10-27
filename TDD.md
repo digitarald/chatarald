@@ -54,6 +54,9 @@ Add a delete button that appears on hover for each conversation in the sidebar, 
 - Consider extracting conversation list item to `<ConversationListItem>` for better testability
 - Add confirmation dialog for delete action (future enhancement)
 
+## Refactors Completed
+- [x] Fixed DOM nesting violation (2025-10-27 - Replaced delete button with div role="button" to avoid button-in-button, added keyboard handlers for accessibility)
+
 ## Done (Green)
 - [x] Delete button appears when hovering over a conversation item (GREEN: 2025-10-25 - Added Trash2 icon button with opacity-0 group-hover:opacity-100, stopPropagation on click)
 - [x] Clicking delete button removes conversation from sidebar list (GREEN: 2025-10-27 - Added handleDeleteConversation that calls store deleteConversation and filters local state)
