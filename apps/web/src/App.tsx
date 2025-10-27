@@ -43,7 +43,13 @@ export default function App() {
 
   const handleDeleteConversation = async (id: string) => {
     await deleteConversation(id);
-    setConversations((prev) => prev.filter((c) => c.id !== id));
+    const remaining = conversations.filter((c) => c.id !== id);
+    setConversations(remaining);
+    
+    // If deleted conversation was active, switch to first remaining or null
+    if (id === currentConversationId) {
+      setCurrentConversationId(remaining.length > 0 ? remaining[0].id : null);
+    }
   };
 
   const currentConversation = conversations.find((c: Conversation) => c.id === currentConversationId);

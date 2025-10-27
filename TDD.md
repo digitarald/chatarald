@@ -4,7 +4,7 @@
 Add a delete button that appears on hover for each conversation in the sidebar, allowing users to remove conversations.
 
 ## Test List (Next)
-- [ ] Clicking delete button calls `deleteConversation(id)` with correct conversation ID
+- [ ] Delete button does not appear when sidebar is collapsed
 
 ## Edge Cases / Invariants
 - Deleting the currently active conversation should switch to another conversation or show empty state
@@ -57,3 +57,5 @@ Add a delete button that appears on hover for each conversation in the sidebar, 
 ## Done (Green)
 - [x] Delete button appears when hovering over a conversation item (GREEN: 2025-10-25 - Added Trash2 icon button with opacity-0 group-hover:opacity-100, stopPropagation on click)
 - [x] Clicking delete button removes conversation from sidebar list (GREEN: 2025-10-27 - Added handleDeleteConversation that calls store deleteConversation and filters local state)
+- [x] Clicking delete button calls `deleteConversation(id)` with correct conversation ID (GREEN: 2025-10-27 - Already covered by previous test assertion)
+- [x] Deleting the currently active conversation switches to another conversation or shows empty state (GREEN: 2025-10-27 - Modified handleDeleteConversation to check if deleted ID is active and switch to first remaining or null)
