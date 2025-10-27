@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Chat from './components/Chat';
 import type { Conversation, ModelId } from '@example/types';
-import { getConversations, saveConversation } from './store/conversations';
+import { getConversations, saveConversation, deleteConversation } from './store/conversations';
 import { Button } from './components/ui/button';
 import { ScrollArea } from './components/ui/scroll-area';
 import { Separator } from './components/ui/separator';
@@ -39,6 +39,11 @@ export default function App() {
     await saveConversation(newConv);
     setConversations((prev: Conversation[]) => [...prev, newConv]);
     setCurrentConversationId(newConv.id);
+  };
+
+  const handleDeleteConversation = async (id: string) => {
+    await deleteConversation(id);
+    setConversations((prev) => prev.filter((c) => c.id !== id));
   };
 
   const currentConversation = conversations.find((c: Conversation) => c.id === currentConversationId);
@@ -118,6 +123,7 @@ export default function App() {
                       className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-red-500/20 transition-all"
                       onClick={(e) => {
                         e.stopPropagation();
+                        handleDeleteConversation(conv.id);
                       }}
                     >
                       <Trash2 className="h-4 w-4 text-red-400" />
