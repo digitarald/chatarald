@@ -4,5 +4,8 @@
         "git add": true,
         "git commit": true,
         "git push": true
+    },
+    "chat.promptFilesRecommendations": {
+        "tdd": true
     }
 }

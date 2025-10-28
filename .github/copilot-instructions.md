@@ -10,6 +10,7 @@ PROJECT DEVELOPMENT REQUIREMENTS:
 - **pnpm monorepo** with workspaces: `apps/web` (React UI), `packages/llm` (LLM library), `packages/types` (shared types)
 - **Test-driven**: Vitest + MSW for HTTP mocking
 - **Provider-agnostic**: OpenRouter + direct SDKs (OpenAI, Anthropic, Google)
+  - Search OpenRouter SDK on https://github.com/OpenRouterTeam/typescript-sdk via #githubRepo
 
 ## Key Principles
 - Library-first: `packages/llm` is the product; UI is thin wrapper

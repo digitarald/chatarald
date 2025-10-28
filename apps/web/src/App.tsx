@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import Chat from './components/Chat';
+import { ConversationListItem } from './components/ConversationListItem';
 import type { Conversation, ModelId } from '@example/types';
-import { getConversations, saveConversation } from './store/conversations';
+import { getConversations, saveConversation, deleteConversation } from './store/conversations';
 import { Button } from './components/ui/button';
 import { ScrollArea } from './components/ui/scroll-area';
 import { Separator } from './components/ui/separator';
@@ -39,6 +40,17 @@ export default function App() {
     await saveConversation(newConv);
     setConversations((prev: Conversation[]) => [...prev, newConv]);
     setCurrentConversationId(newConv.id);
+  };
+
+  const handleDeleteConversation = async (id: string) => {
+    await deleteConversation(id);
+    const remaining = conversations.filter((c) => c.id !== id);
+    setConversations(remaining);
+    
+    // If deleted conversation was active, switch to first remaining or null
+    if (id === currentConversationId) {
+      setCurrentConversationId(remaining.length > 0 ? remaining[0].id : null);
+    }
   };
 
   const currentConversation = conversations.find((c: Conversation) => c.id === currentConversationId);
@@ -98,22 +110,13 @@ export default function App() {
             <ScrollArea className="flex-1 px-4">
               <div className="flex flex-col gap-2">
                 {conversations.map((conv: Conversation) => (
-                  <button
+                  <ConversationListItem
                     key={conv.id}
-                    onClick={() => {
-                      setCurrentConversationId(conv.id);
-                    }}
-                    className={cn(
-                      'px-3 py-2.5 rounded-md text-sm text-left transition-all',
-                      'hover:bg-slate-700',
-                      conv.id === currentConversationId
-                        ? 'bg-accent text-white active'
-                        : 'bg-slate-800 text-white/90'
-                    )}
-                    data-active={conv.id === currentConversationId}
-                  >
-                    {conv.title}
-                  </button>
+                    conversation={conv}
+                    isActive={conv.id === currentConversationId}
+                    onSelect={setCurrentConversationId}
+                    onDelete={handleDeleteConversation}
+                  />
                 ))}
               </div>
             </ScrollArea>

@@ -1,5 +1,6 @@
 ---
 agent: tdd-red
-description: Start a new feature using Test-Driven Development (TDD)
+description: Start a new feature
+argument-hint: Describe the feature or behavior to implement
 ---
 Start TDD for a new feature.
