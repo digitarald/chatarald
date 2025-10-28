@@ -6,7 +6,11 @@
 			"type": "shell",
 			"command": "pnpm -w dev",
 			"isBackground": true,
-			"problemMatcher": []
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
 		}
 	]
 }
