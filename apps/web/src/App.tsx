@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Chat from './components/Chat';
 import { ConversationListItem } from './components/ConversationListItem';
 import type { Conversation, ModelId } from '@example/types';
-import { getConversations, saveConversation, deleteConversation } from './store/conversations';
+import { getConversations, saveConversation, deleteConversation, getMessages } from './store/conversations';
 import { Button } from './components/ui/button';
 import { ScrollArea } from './components/ui/scroll-area';
 import { Separator } from './components/ui/separator';
@@ -29,6 +29,14 @@ export default function App() {
   };
 
   const createNewConversation = async () => {
+    // Don't create if current conversation is empty
+    if (currentConversationId) {
+      const messages = await getMessages(currentConversationId);
+      if (messages.length === 0) {
+        return;
+      }
+    }
+    
     const newConv: Conversation = {
       id: crypto.randomUUID(),
       title: `Chat ${conversations.length + 1}`,

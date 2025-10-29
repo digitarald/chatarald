@@ -38,7 +38,7 @@ A test-driven, library-first ChatGPT-style web app in TypeScript. Built as a pnp
    ```sh
    pnpm -w dev
    ```
-   Open http://localhost:3000
+   Open http://localhost:3003
 
 ## Development
 

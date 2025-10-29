@@ -314,6 +314,46 @@ describe('App Component', () => {
     expect(screen.queryByRole('button', { name: /delete chat 1/i })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /delete chat 2/i })).not.toBeInTheDocument();
   });
+
+  it('does not create new conversation when current conversation is empty', async () => {
+    // Arrange
+    const user = userEvent.setup();
+    const { getConversations, getMessages, saveConversation } = await import('@/store/conversations');
+    
+    // Start with one existing empty conversation
+    vi.mocked(getConversations).mockResolvedValueOnce([
+      {
+        id: 'conv-1',
+        title: 'Chat 1',
+        model: 'openrouter:gpt-4o',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    ]);
+    
+    // Mock getMessages to return empty array (no messages in conversation)
+    vi.mocked(getMessages).mockResolvedValue([]);
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Chat 1')).toBeInTheDocument();
+    });
+
+    // Act - Click "New Chat" button
+    const newChatBtn = screen.getByRole('button', { name: /new chat/i });
+    await user.click(newChatBtn);
+
+    // Assert - Should NOT create new conversation (saveConversation should not be called)
+    await waitFor(() => {
+      expect(saveConversation).not.toHaveBeenCalled();
+    });
+    
+    // Sidebar should still only show one conversation
+    expect(screen.getByText('Chat 1')).toBeInTheDocument();
+    const allChatItems = screen.queryAllByText(/^Chat \d+$/);
+    expect(allChatItems).toHaveLength(1);
+  });
 });
 
 

@@ -22,7 +22,7 @@ PROJECT DEVELOPMENT REQUIREMENTS:
 ## Development Workflow
 1. Write tests first (TDD)
 2. Run unit tests: `pnpm test` (Vitest watch mode)
-3. Dev server: `pnpm -w dev` (Vite at http://localhost:3000)
+3. Dev server: `pnpm -w dev` (Vite at http://localhost:3003)
 4. Environment: Set `OPENROUTER_API_KEY` in workspace root `.env` for live calls
 
 ### Styling (Tailwind v4)

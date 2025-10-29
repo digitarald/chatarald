@@ -26,7 +26,7 @@ Minimal React UI for the chatarald LLM client.
 pnpm dev
 ```
 
-Runs on http://localhost:3000
+Runs on http://localhost:3003
 
 ## Environment
 
