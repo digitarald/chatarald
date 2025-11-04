@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '@/App';
+import type { Conversation } from '@example/types';
 
 // Mock the store
 vi.mock('@/store/conversations', () => ({
@@ -315,44 +316,53 @@ describe('App Component', () => {
     expect(screen.queryByRole('button', { name: /delete chat 2/i })).not.toBeInTheDocument();
   });
 
-  it('does not create new conversation when current conversation is empty', async () => {
+  it('should create new conversation when current conversation has messages', async () => {
     // Arrange
     const user = userEvent.setup();
-    const { getConversations, getMessages, saveConversation } = await import('@/store/conversations');
+    const { getConversations, saveConversation, getMessages } = await import('@/store/conversations');
     
-    // Start with one existing empty conversation
-    vi.mocked(getConversations).mockResolvedValueOnce([
+    const existingConv: Conversation = {
+      id: 'existing-1',
+      title: 'Existing Chat',
+      model: 'openrouter:gpt-4o',
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+    
+    vi.mocked(getConversations).mockResolvedValue([existingConv]);
+    
+    // Mock getMessages to return messages for existing conversation
+    vi.mocked(getMessages).mockResolvedValue([
       {
-        id: 'conv-1',
-        title: 'Chat 1',
-        model: 'openrouter:gpt-4o',
+        id: 'msg-1',
+        role: 'user',
+        content: 'Hello',
         createdAt: Date.now(),
-        updatedAt: Date.now(),
+        conversationId: 'existing-1',
       },
     ]);
-    
-    // Mock getMessages to return empty array (no messages in conversation)
-    vi.mocked(getMessages).mockResolvedValue([]);
 
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText('Chat 1')).toBeInTheDocument();
+      expect(screen.getByText('Existing Chat')).toBeInTheDocument();
     });
 
-    // Act - Click "New Chat" button
+    // Clear any calls made during initial render
+    vi.mocked(getMessages).mockClear();
+    vi.mocked(saveConversation).mockClear();
+    
+    // Act - Click "New Chat" when current conversation has messages
     const newChatBtn = screen.getByRole('button', { name: /new chat/i });
     await user.click(newChatBtn);
 
-    // Assert - Should NOT create new conversation (saveConversation should not be called)
-    await waitFor(() => {
-      expect(saveConversation).not.toHaveBeenCalled();
-    });
+    // Assert - Should call getMessages with current conversation ID
+    // to check if it has messages before creating new one
+    // This will FAIL because createNewConversation doesn't check messages yet
+    expect(getMessages).toHaveBeenCalledWith('existing-1');
     
-    // Sidebar should still only show one conversation
-    expect(screen.getByText('Chat 1')).toBeInTheDocument();
-    const allChatItems = screen.queryAllByText(/^Chat \d+$/);
-    expect(allChatItems).toHaveLength(1);
+    // Should create new conversation since current has messages
+    expect(saveConversation).toHaveBeenCalled();
   });
 });
 

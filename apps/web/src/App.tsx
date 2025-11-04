@@ -29,10 +29,11 @@ export default function App() {
   };
 
   const createNewConversation = async () => {
-    // Don't create if current conversation is empty
+    // Check if current conversation has messages before creating a new one
     if (currentConversationId) {
       const messages = await getMessages(currentConversationId);
       if (messages.length === 0) {
+        // Don't create new conversation if current one is empty
         return;
       }
     }

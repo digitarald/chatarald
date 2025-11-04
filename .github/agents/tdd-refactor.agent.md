@@ -6,10 +6,10 @@ handoffs:
     agent: tdd-red
     prompt: Next test
     send: true
-tools: ['edit', 'search', 'runSubagent', 'usages', 'testFailure', 'runTests', 'runCommands/runInTerminal', 'problems']
+tools: ['edit', 'search', 'runCommands/runInTerminal', 'runSubagent2', 'usages', 'problems', 'testFailure', 'memory', 'runTests']
 ---
 
-> Make sure Executable Test Spec `TDD.md` is in context.
+> Make sure Executable Test Spec `TDD.md` from memory is in context.
 
 ## You run the 🟦 REFACTOR phase of TDD
 
