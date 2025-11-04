@@ -11,6 +11,7 @@ vi.mock('@/store/conversations', () => ({
   getMessages: vi.fn().mockResolvedValue([]),
   saveMessage: vi.fn(),
   deleteConversation: vi.fn(),
+  isConversationEmpty: vi.fn().mockResolvedValue(true),
 }));
 
 // Mock the tokenizer hook
@@ -319,7 +320,7 @@ describe('App Component', () => {
   it('should create new conversation when current conversation has messages', async () => {
     // Arrange
     const user = userEvent.setup();
-    const { getConversations, saveConversation, getMessages } = await import('@/store/conversations');
+    const { getConversations, saveConversation, isConversationEmpty } = await import('@/store/conversations');
     
     const existingConv: Conversation = {
       id: 'existing-1',
@@ -331,16 +332,8 @@ describe('App Component', () => {
     
     vi.mocked(getConversations).mockResolvedValue([existingConv]);
     
-    // Mock getMessages to return messages for existing conversation
-    vi.mocked(getMessages).mockResolvedValue([
-      {
-        id: 'msg-1',
-        role: 'user',
-        content: 'Hello',
-        createdAt: Date.now(),
-        conversationId: 'existing-1',
-      },
-    ]);
+    // Mock isConversationEmpty to return false (conversation has messages)
+    vi.mocked(isConversationEmpty).mockResolvedValue(false);
 
     render(<App />);
 
@@ -349,17 +342,15 @@ describe('App Component', () => {
     });
 
     // Clear any calls made during initial render
-    vi.mocked(getMessages).mockClear();
+    vi.mocked(isConversationEmpty).mockClear();
     vi.mocked(saveConversation).mockClear();
     
     // Act - Click "New Chat" when current conversation has messages
     const newChatBtn = screen.getByRole('button', { name: /new chat/i });
     await user.click(newChatBtn);
 
-    // Assert - Should call getMessages with current conversation ID
-    // to check if it has messages before creating new one
-    // This will FAIL because createNewConversation doesn't check messages yet
-    expect(getMessages).toHaveBeenCalledWith('existing-1');
+    // Assert - Should check if conversation is empty
+    expect(isConversationEmpty).toHaveBeenCalledWith('existing-1');
     
     // Should create new conversation since current has messages
     expect(saveConversation).toHaveBeenCalled();

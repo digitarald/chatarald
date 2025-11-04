@@ -21,8 +21,14 @@ Prevent duplicate empty conversations by blocking "New Chat" button when the cur
 - No UI changes needed - just behavior change
 
 ## Refactors Queued
-- Consider extracting "is conversation empty" logic into store helper
 - Add visual feedback when button is "disabled" (clicked but no-op)
+
+## Refactors Done
+- [x] **2025-11-04** Extract "is conversation empty" logic into store helper
+  - Created `isConversationEmpty(conversationId)` helper in `apps/web/src/store/conversations.ts`
+  - Simplified `createNewConversation` in `App.tsx` to use the helper
+  - Improved readability: logic is now a named, reusable function
+  - All 34 tests still pass
 
 ## Done (Green)
 - [x] **2025-11-04** Should create new conversation when current conversation has messages
