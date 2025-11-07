@@ -7,7 +7,9 @@ Maintain exactly one empty conversation at the top (newest / most recently used 
 - [x] Auto-creates initial empty conversation on mount when none exist
 - [x] Blocks creating second empty conversation while top conversation is empty (New Chat click is no-op and button shows disabled affordance)
 - [x] Creates a new empty conversation at top only after first one gets a message
-- [ ] Reorders list so most recently messaged conversation moves to top
+- [x] Reorders list so most recently messaged conversation moves to top
+
+**All core requirements implemented! 🎉**
 
 ## Edge Cases / Invariants
 - Empty conversation = `getMessages(conversationId)` returns `[]`
@@ -59,6 +61,13 @@ Maintain exactly one empty conversation at the top (newest / most recently used 
   - All 34 tests still pass
 
 ## Done (Green)
+- [x] **2025-11-07** Reorders list so most recently messaged conversation moves to top
+  - Implementation: Added `updateConversationTimestamp()` function to store that updates `updatedAt` when messages are sent
+  - Modified `Chat.tsx` to call this function after saving each user message
+  - Added `onMessageSent` callback prop to Chat component for triggering conversation list refresh in App
+  - Conversations now reorder dynamically as they receive messages, keeping active chats at the top
+  - Test verifies Chat 2 moves above Chat 1 after receiving a message
+  - All 14 tests pass
 - [x] **2025-11-07** Creates a new empty conversation at top only after first one gets a message
   - Implementation: Added sorting logic to conversations display in `App.tsx`
   - Conversations now sorted by `updatedAt` descending (with fallback to `createdAt`)
