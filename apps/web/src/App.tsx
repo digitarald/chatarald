@@ -191,7 +191,8 @@ export default function App() {
           <Chat 
             key={currentConversation.id}
             conversationId={currentConversation.id} 
-            model={currentConversation.model} 
+            model={currentConversation.model}
+            onMessageSent={() => loadConversations()}
           />
         ) : (
           <div className="flex-1 flex items-center justify-center">

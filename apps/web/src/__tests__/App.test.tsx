@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '@/App';
 import type { Conversation } from '@example/types';
@@ -12,6 +12,7 @@ vi.mock('@/store/conversations', () => ({
   saveMessage: vi.fn(),
   deleteConversation: vi.fn(),
   isConversationEmpty: vi.fn().mockResolvedValue(true),
+  updateConversationTimestamp: vi.fn(),
 }));
 
 // Mock the tokenizer hook
@@ -28,6 +29,18 @@ vi.mock('@/hooks/useTokenCount', () => ({
 // Mock environment
 vi.stubEnv('VITE_OPENROUTER_API_KEY', 'test-key');
 vi.stubEnv('VITE_DEFAULT_MODEL', 'openrouter:x-ai/grok-2-1212');
+
+// Mock LLM driver to avoid real network calls during message send flow
+vi.mock('@example/llm', () => ({
+  OpenRouterDriver: {
+    estimateTokens: vi.fn().mockResolvedValue({ promptTokens: 5 }),
+    chat: vi.fn().mockResolvedValue({
+      text: 'Reply',
+      usageActual: { promptTokens: 5, completionTokens: 10, totalTokens: 15 },
+      reasoningDetails: []
+    })
+  }
+}));
 
 describe('App Component', () => {
   beforeEach(() => {
@@ -454,6 +467,61 @@ describe('App Component', () => {
     // Order expectation: newest empty conversation appears at top
     const orderedTitles = screen.getAllByText(/Chat \d/).map(el => el.textContent);
     expect(orderedTitles[0]).toBe('Chat 2');
+  });
+
+  it('reorders list so most recently messaged conversation moves to top', async () => {
+    // Arrange
+    const user = userEvent.setup();
+    const { getConversations, updateConversationTimestamp } = await import('@/store/conversations');
+    const now = Date.now();
+    const conversations = [
+      { id: '1', title: 'Chat 1', model: 'openrouter:gpt-4o', createdAt: now - 2000, updatedAt: now },
+      { id: '2', title: 'Chat 2', model: 'openrouter:gpt-4o', createdAt: now - 4000, updatedAt: now - 3000 },
+    ] as Conversation[];
+    
+    // Initial mock - Chat 1 is newer (on top)
+    vi.mocked(getConversations).mockResolvedValue(conversations);
+
+    // Mock updateConversationTimestamp to actually update the mock data
+    vi.mocked(updateConversationTimestamp).mockImplementation(async (id: string) => {
+      const conv = conversations.find(c => c.id === id);
+      if (conv) {
+        conv.updatedAt = Date.now() + 1000; // Make it newest
+        // Update the mock to return the new order
+        const sorted = [...conversations].sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
+        vi.mocked(getConversations).mockResolvedValue(sorted);
+      }
+    });
+
+    render(<App />);
+
+    // Wait for both conversations to appear
+    await waitFor(() => {
+      expect(screen.getByText('Chat 1')).toBeInTheDocument();
+      expect(screen.getByText('Chat 2')).toBeInTheDocument();
+    });
+
+    // Initial order expectation: Chat 1 first, Chat 2 second
+    const orderedBefore = screen.getAllByText(/Chat \d/).map(el => el.textContent);
+    expect(orderedBefore[0]).toBe('Chat 1');
+    expect(orderedBefore[1]).toBe('Chat 2');
+
+    // Select Chat 2
+    const chat2Btn = screen.getByText('Chat 2');
+    await user.click(chat2Btn);
+
+    // Type a message and send (Enter)
+    const textarea = screen.getByPlaceholderText('Type your message...');
+    await user.type(textarea, 'Hello{enter}');
+
+    // Wait for assistant reply rendered via mock driver
+    await waitFor(() => {
+      expect(screen.getByText('Reply')).toBeInTheDocument();
+    });
+
+    // After sending a message, Chat 2 should move to top
+    const orderedAfter = screen.getAllByText(/Chat \d/).map(el => el.textContent);
+    expect(orderedAfter[0]).toBe('Chat 2');
   });
 });
 

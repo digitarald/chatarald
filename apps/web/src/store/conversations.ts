@@ -33,6 +33,16 @@ export async function saveMessage(message: Message): Promise<void> {
   await set(`${MESSAGES_PREFIX}${message.conversationId}`, messages);
 }
 
+export async function updateConversationTimestamp(conversationId: string): Promise<void> {
+  const conversations = await getConversations();
+  const index = conversations.findIndex(c => c.id === conversationId);
+  
+  if (index >= 0) {
+    conversations[index].updatedAt = Date.now();
+    await set(CONVERSATIONS_KEY, conversations);
+  }
+}
+
 export async function isConversationEmpty(conversationId: string): Promise<boolean> {
   const messages = await getMessages(conversationId);
   return messages.length === 0;

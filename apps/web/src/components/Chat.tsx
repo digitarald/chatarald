@@ -3,7 +3,7 @@ import type { Message, ModelId } from '@example/types';
 import type { ReasoningEffort } from '@example/llm';
 import { OpenRouterDriver } from '@example/llm';
 import { useTokenCount } from '../hooks/useTokenCount';
-import { saveMessage, getMessages } from '../store/conversations';
+import { saveMessage, getMessages, updateConversationTimestamp } from '../store/conversations';
 import { MessageBubble } from './MessageBubble';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -14,9 +14,10 @@ import { cn } from '@/lib/utils';
 interface ChatProps {
   conversationId: string;
   model: ModelId;
+  onMessageSent?: () => void;
 }
 
-export default function Chat({ conversationId, model }: ChatProps) {
+export default function Chat({ conversationId, model, onMessageSent }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +52,8 @@ export default function Chat({ conversationId, model }: ChatProps) {
 
     setMessages(prev => [...prev, userMessage]);
     await saveMessage(userMessage);
+    await updateConversationTimestamp(conversationId);
+    onMessageSent?.();
     setInput('');
     setIsLoading(true);
 

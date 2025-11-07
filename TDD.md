@@ -39,6 +39,12 @@ Maintain exactly one empty conversation at the top (newest / most recently used 
 - Visual feedback for disabled New Chat (tooltip or subdued button)
 - Consider memoizing `isConversationEmpty` state per conversation to reduce reads
 ## Refactors Done
+- [x] **2025-11-07** Extract sorted conversations into useMemo for performance and consistency
+  - Created `sortedConversations` memoized value that sorts by `updatedAt` descending
+  - Updated all references to use `sortedConversations` instead of inline sorting or raw `conversations[0]`
+  - Ensures consistent ordering across UI rendering and business logic (top conversation check)
+  - Avoids re-sorting on every render (performance improvement)
+  - All 13 tests still pass
 - [x] **2025-11-07** Extract disabled button state management into reactive useEffect
   - Moved `isNewChatDisabled` state calculation from imperative (inside `createNewConversation`) to declarative (reactive `useEffect` watching `conversations`)
   - Simplified `createNewConversation` by removing manual state updates for disabled affordance
