@@ -6,7 +6,7 @@ Maintain exactly one empty conversation at the top (newest / most recently used 
 ## Test List (Next)
 - [x] Auto-creates initial empty conversation on mount when none exist
 - [x] Blocks creating second empty conversation while top conversation is empty (New Chat click is no-op and button shows disabled affordance)
-- [ ] Creates a new empty conversation at top only after first one gets a message
+- [x] Creates a new empty conversation at top only after first one gets a message
 - [ ] Reorders list so most recently messaged conversation moves to top
 
 ## Edge Cases / Invariants
@@ -53,6 +53,12 @@ Maintain exactly one empty conversation at the top (newest / most recently used 
   - All 34 tests still pass
 
 ## Done (Green)
+- [x] **2025-11-07** Creates a new empty conversation at top only after first one gets a message
+  - Implementation: Added sorting logic to conversations display in `App.tsx`
+  - Conversations now sorted by `updatedAt` descending (with fallback to `createdAt`)
+  - New conversations are created with `updatedAt: Date.now()` so they always appear at top
+  - Test verifies Chat 2 (newly created) appears before Chat 1 in the sorted list
+  - All 13 tests pass
 - [x] **2025-11-07** Blocks creating second empty conversation while top is empty (New Chat click is no-op and button shows disabled affordance)
   - Implementation: Modified `createNewConversation()` in `App.tsx` to check if top conversation is empty before creating new one
   - Added `isNewChatDisabled` state to track disabled status and pass `aria-disabled` attribute to both New Chat buttons

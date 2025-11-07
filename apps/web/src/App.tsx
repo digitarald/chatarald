@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Chat from './components/Chat';
 import { ConversationListItem } from './components/ConversationListItem';
 import type { Conversation, ModelId } from '@example/types';
@@ -15,6 +15,14 @@ export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isNewChatDisabled, setIsNewChatDisabled] = useState(false);
+
+  // Sort conversations by recency (newest first)
+  const sortedConversations = useMemo(() => {
+    return [...conversations].sort((a, b) => 
+      (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt)
+    );
+  }, [conversations]);
 
   useEffect(() => {
     loadConversations();
@@ -23,20 +31,18 @@ export default function App() {
   // Reactively check if top conversation is empty to determine button state
   useEffect(() => {
     const checkTopConversationEmpty = async () => {
-      if (conversations.length === 0) {
+      if (sortedConversations.length === 0) {
         setIsNewChatDisabled(false);
         return;
       }
       
-      const topConversation = conversations[0];
+      const topConversation = sortedConversations[0];
       const isEmpty = await isConversationEmpty(topConversation.id);
       setIsNewChatDisabled(isEmpty);
     };
 
     checkTopConversationEmpty();
-  }, [conversations]);
-
-  const [isNewChatDisabled, setIsNewChatDisabled] = useState(false);
+  }, [sortedConversations]);
 
   const loadConversations = async () => {
     const loaded = await getConversations();
@@ -63,7 +69,7 @@ export default function App() {
 
   const createNewConversation = async () => {
     // Don't create new conversation if top one is empty
-    const topConversation = conversations.length > 0 ? conversations[0] : null;
+    const topConversation = sortedConversations.length > 0 ? sortedConversations[0] : null;
     if (topConversation && await isConversationEmpty(topConversation.id)) {
       return;
     }
@@ -149,18 +155,15 @@ export default function App() {
             {/* Conversations List */}
             <ScrollArea className="flex-1 px-4">
               <div className="flex flex-col gap-2">
-                {conversations
-                  .slice()
-                  .sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt))
-                  .map((conv: Conversation) => (
-                    <ConversationListItem
-                      key={conv.id}
-                      conversation={conv}
-                      isActive={conv.id === currentConversationId}
-                      onSelect={setCurrentConversationId}
-                      onDelete={handleDeleteConversation}
-                    />
-                  ))}
+                {sortedConversations.map((conv: Conversation) => (
+                  <ConversationListItem
+                    key={conv.id}
+                    conversation={conv}
+                    isActive={conv.id === currentConversationId}
+                    onSelect={setCurrentConversationId}
+                    onDelete={handleDeleteConversation}
+                  />
+                ))}
               </div>
             </ScrollArea>
           </>
