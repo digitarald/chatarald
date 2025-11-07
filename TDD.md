@@ -5,7 +5,7 @@ Maintain exactly one empty conversation at the top (newest / most recently used 
 
 ## Test List (Next)
 - [x] Auto-creates initial empty conversation on mount when none exist
-- [ ] Blocks creating second empty conversation while top conversation is empty (New Chat click is no-op and button shows disabled affordance)
+- [x] Blocks creating second empty conversation while top conversation is empty (New Chat click is no-op and button shows disabled affordance)
 - [ ] Creates a new empty conversation at top only after first one gets a message
 - [ ] Reorders list so most recently messaged conversation moves to top
 
@@ -39,7 +39,11 @@ Maintain exactly one empty conversation at the top (newest / most recently used 
 - Visual feedback for disabled New Chat (tooltip or subdued button)
 - Consider memoizing `isConversationEmpty` state per conversation to reduce reads
 ## Refactors Done
-- None yet
+- [x] **2025-11-07** Extract disabled button state management into reactive useEffect
+  - Moved `isNewChatDisabled` state calculation from imperative (inside `createNewConversation`) to declarative (reactive `useEffect` watching `conversations`)
+  - Simplified `createNewConversation` by removing manual state updates for disabled affordance
+  - Improved separation of concerns: button state is now derived from data, not set during actions
+  - All 12 tests still pass
 
 ## Refactors Done
 - [x] **2025-11-04** Extract "is conversation empty" logic into store helper
@@ -49,6 +53,11 @@ Maintain exactly one empty conversation at the top (newest / most recently used 
   - All 34 tests still pass
 
 ## Done (Green)
+- [x] **2025-11-07** Blocks creating second empty conversation while top is empty (New Chat click is no-op and button shows disabled affordance)
+  - Implementation: Modified `createNewConversation()` in `App.tsx` to check if top conversation is empty before creating new one
+  - Added `isNewChatDisabled` state to track disabled status and pass `aria-disabled` attribute to both New Chat buttons
+  - When top conversation is empty, function returns early and sets button disabled affordance
+  - Test in `apps/web/src/__tests__/App.test.tsx` passes; all 12 tests pass
 - [x] **2025-11-07** Auto-creates initial empty conversation on mount when none exist
   - Implementation: Modified `loadConversations()` in `App.tsx` to check if loaded conversations array is empty
   - When empty, creates and persists a single initial empty conversation with title "Chat 1"

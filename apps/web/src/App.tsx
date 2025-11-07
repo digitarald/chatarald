@@ -15,11 +15,28 @@ export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isNewChatDisabled, setIsNewChatDisabled] = useState(false);
 
   useEffect(() => {
     loadConversations();
   }, []);
+
+  // Reactively check if top conversation is empty to determine button state
+  useEffect(() => {
+    const checkTopConversationEmpty = async () => {
+      if (conversations.length === 0) {
+        setIsNewChatDisabled(false);
+        return;
+      }
+      
+      const topConversation = conversations[0];
+      const isEmpty = await isConversationEmpty(topConversation.id);
+      setIsNewChatDisabled(isEmpty);
+    };
+
+    checkTopConversationEmpty();
+  }, [conversations]);
+
+  const [isNewChatDisabled, setIsNewChatDisabled] = useState(false);
 
   const loadConversations = async () => {
     const loaded = await getConversations();
@@ -45,16 +62,11 @@ export default function App() {
   };
 
   const createNewConversation = async () => {
-    // Get top conversation (first in list)
-    const topConversation = conversations.length > 0 ? conversations[0] : null;
-    
     // Don't create new conversation if top one is empty
+    const topConversation = conversations.length > 0 ? conversations[0] : null;
     if (topConversation && await isConversationEmpty(topConversation.id)) {
-      setIsNewChatDisabled(true);
       return;
     }
-    
-    setIsNewChatDisabled(false);
     
     const newConv: Conversation = {
       id: crypto.randomUUID(),
