@@ -51,13 +51,17 @@ export default function Chat({ conversationId, model, onMessageSent }: ChatProps
     };
 
     setMessages(prev => [...prev, userMessage]);
-    await saveMessage(userMessage);
-    await updateConversationTimestamp(conversationId);
-    onMessageSent?.();
     setInput('');
     setIsLoading(true);
 
     try {
+      // Save user message and update conversation timestamp
+      await saveMessage(userMessage);
+      await updateConversationTimestamp(conversationId);
+      
+      // Notify parent that conversation was updated (triggers list refresh)
+      onMessageSent?.();
+      
       // Get API key from environment
       const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
       

@@ -11,6 +11,10 @@ import { cn } from './lib/utils';
 
 const DEFAULT_MODEL: ModelId = (import.meta.env.VITE_DEFAULT_MODEL || 'openrouter:x-ai/grok-2-1212') as ModelId;
 
+// Sort conversations by recency (newest/most recently updated first)
+const compareConversationsByRecency = (a: Conversation, b: Conversation) => 
+  (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt);
+
 export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
@@ -19,9 +23,7 @@ export default function App() {
 
   // Sort conversations by recency (newest first)
   const sortedConversations = useMemo(() => {
-    return [...conversations].sort((a, b) => 
-      (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt)
-    );
+    return [...conversations].sort(compareConversationsByRecency);
   }, [conversations]);
 
   useEffect(() => {
@@ -61,6 +63,7 @@ export default function App() {
       setCurrentConversationId(initialConv.id);
     } else {
       setConversations(loaded);
+      // Only set currentConversationId if not already set (preserve active conversation)
       if (!currentConversationId) {
         setCurrentConversationId(loaded[0].id);
       }
