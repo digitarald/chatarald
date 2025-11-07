@@ -149,15 +149,18 @@ export default function App() {
             {/* Conversations List */}
             <ScrollArea className="flex-1 px-4">
               <div className="flex flex-col gap-2">
-                {conversations.map((conv: Conversation) => (
-                  <ConversationListItem
-                    key={conv.id}
-                    conversation={conv}
-                    isActive={conv.id === currentConversationId}
-                    onSelect={setCurrentConversationId}
-                    onDelete={handleDeleteConversation}
-                  />
-                ))}
+                {conversations
+                  .slice()
+                  .sort((a, b) => (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt))
+                  .map((conv: Conversation) => (
+                    <ConversationListItem
+                      key={conv.id}
+                      conversation={conv}
+                      isActive={conv.id === currentConversationId}
+                      onSelect={setCurrentConversationId}
+                      onDelete={handleDeleteConversation}
+                    />
+                  ))}
               </div>
             </ScrollArea>
           </>

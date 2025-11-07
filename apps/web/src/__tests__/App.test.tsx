@@ -409,6 +409,52 @@ describe('App Component', () => {
     // Button should have aria-disabled="true"
     expect(newChatBtn).toHaveAttribute('aria-disabled', 'true');
   });
+
+  it('creates a new empty conversation at top only after first one gets a message', async () => {
+    // Arrange
+    const user = userEvent.setup();
+    const { getConversations, saveConversation, isConversationEmpty, saveMessage } = await import('@/store/conversations');
+
+    // Setup: empty list on load, first conversation is empty
+    vi.mocked(getConversations).mockResolvedValueOnce([]);
+    vi.mocked(isConversationEmpty).mockResolvedValue(true);
+
+    // Initial load: auto-create first empty conversation
+    render(<App />);
+    await waitFor(() => {
+      expect(saveConversation).toHaveBeenCalledTimes(1);
+    });
+
+    // Verify UI updated
+    await waitFor(() => {
+      expect(screen.queryByText(/create a new chat/i)).not.toBeInTheDocument();
+    });
+
+    // Attempt premature new chat (should be blocked while empty)
+    const newChatBtn = screen.getByRole('button', { name: /new chat/i });
+    await user.click(newChatBtn);
+    expect(saveConversation).toHaveBeenCalledTimes(1); // still only initial
+
+    // Simulate first conversation receiving a message - change mock to return false
+    vi.mocked(isConversationEmpty).mockResolvedValue(false);
+
+    // Act - Now create new chat (should succeed)
+    await user.click(newChatBtn);
+
+    // Assert - Second conversation should have been created
+    await waitFor(() => {
+      expect(saveConversation).toHaveBeenCalledTimes(2);
+    });
+
+    // Verify Chat 2 appears in sidebar
+    await waitFor(() => {
+      expect(screen.getByText('Chat 2')).toBeInTheDocument();
+    });
+
+    // Order expectation: newest empty conversation appears at top
+    const orderedTitles = screen.getAllByText(/Chat \d/).map(el => el.textContent);
+    expect(orderedTitles[0]).toBe('Chat 2');
+  });
 });
 
 
