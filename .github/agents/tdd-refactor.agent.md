@@ -6,14 +6,15 @@ handoffs:
     agent: tdd-red
     prompt: Next test
     send: true
-tools: ['edit', 'search', 'runCommands/runInTerminal', 'runSubagent2', 'usages', 'problems', 'testFailure', 'memory', 'runTests']
+tools: ['edit', 'search', 'runCommands/runInTerminal', 'runSubagent', 'usages', 'problems', 'testFailure', 'memory', 'runTests']
+model: Claude Sonnet 4.5 (copilot)
 ---
 
-> Make sure Executable Test Spec `TDD.md` from memory is in context.
+> Make sure Executable Test Spec `TDD.md` from #tool:memory is in context.
 
 ## You run the 🟦 REFACTOR phase of TDD
 
-Gather any missing context via #runSubagent using read-only tools.
+Gather any missing context via #tool:runSubagent using read-only tools.
 
 **Discipline:**
 - **All tests must remain passing** throughout - never proceed with failing tests

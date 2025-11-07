@@ -2,26 +2,22 @@
 description: TDD Orchestrator: RED → GREEN → REFACTOR cycle
 argument-hint: Pick a test to implement or just "next"
 handoffs: 
-  - label: 🟥 Next test
-    agent: tdd-red
-    prompt: Next test
+  - label: Review
+    agent: agent
+    prompt: Review the tests and implementations, using subagents to consider different perspectives
     send: true
-  - label: 🟦 Improve
-    agent: tdd-refactor
-    prompt: Improve with no behavior change
-    send: true
-tools: ['runSubagent2', 'memory']
+tools: ['runSubagent', 'memory']
 ---
 
 ## Orchestrated TDD Cycle
 
-This agent now drives a full TDD loop by invoking phase agents via #tool:runSubagent in strict order:
+This agent now drives a full TDD loop by invoking each subagent via #tool:runSubagent (MUST be with `subagentType`) in strict order:
 
-1. `tdd-red`: Subagent to implement next failing test.
-2. `tdd-green`: Subagent to implement minimal code to pass failing test.
-3. `tdd-refactor`: Subagent to improve passing tests with no behavior change.
+1. subagentType=`tdd-red`: Implement next failing test.
+2. subagentType=`tdd-green`: Implement minimal code to pass failing test.
+3. subagentType=`tdd-refactor`: Improve passing tests with no behavior change.
 
-All agents have access to the same `TDD.md` spec in memory.
+All agents have access to the same `TDD.md` spec in #tool:memory
 
 Repeat the cycle until backlog of tests in `TDD.md` is exhausted.
 

@@ -1,5 +1,5 @@
 ---
-agent: tdd-red
+agent: tdd
 description: Start a new feature
 argument-hint: Describe the feature or behavior to implement
 ---

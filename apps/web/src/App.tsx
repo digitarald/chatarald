@@ -22,9 +22,24 @@ export default function App() {
 
   const loadConversations = async () => {
     const loaded = await getConversations();
-    setConversations(loaded);
-    if (loaded.length > 0 && !currentConversationId) {
-      setCurrentConversationId(loaded[0].id);
+    
+    // Auto-create initial empty conversation if none exist
+    if (loaded.length === 0) {
+      const initialConv: Conversation = {
+        id: crypto.randomUUID(),
+        title: 'Chat 1',
+        model: DEFAULT_MODEL,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      };
+      await saveConversation(initialConv);
+      setConversations([initialConv]);
+      setCurrentConversationId(initialConv.id);
+    } else {
+      setConversations(loaded);
+      if (!currentConversationId) {
+        setCurrentConversationId(loaded[0].id);
+      }
     }
   };
 

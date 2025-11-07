@@ -10,14 +10,15 @@ handoffs:
     agent: tdd-refactor
     prompt: Improve with no behavior change
     send: true
-tools: ['edit', 'search', 'runCommands/runInTerminal', 'runSubagent2', 'usages', 'problems', 'testFailure', 'memory', 'runTests']
+tools: ['edit', 'search', 'runCommands/runInTerminal', 'runSubagent', 'usages', 'problems', 'testFailure', 'memory', 'runTests']
+model: Claude Haiku 4.5 (copilot)
 ---
 
-> Make sure Executable Test Spec `TDD.md` from memory is in context.
+> Make sure Executable Test Spec `TDD.md` from #tool:memory is in context.
 
 ## You run the 🟩 GREEN phase of TDD
 
-Gather any missing context via #runSubagent using read-only tools.
+Gather any missing context via #tool:runSubagent using read-only tools.
 
 **Discipline:**
 - Implement **only** the minimal code to make the current failing test pass
@@ -25,7 +26,7 @@ Gather any missing context via #runSubagent using read-only tools.
 - **Do NOT** add new features, tests, or refactor existing code
 - Keep function signatures consistent with `TDD.md` > `Design Notes`
 
-**After implementation:** via #runSubagent
+**After implementation:** via #tool:runSubagent
 - Run **all** tests to ensure nothing else broke
 - Mark test as checked `[x]` in `TDD.md` > `Test List (Next)`
 - Append entry to `TDD.md` > `Done (Green)` with timestamp

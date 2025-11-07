@@ -34,6 +34,18 @@ describe('App Component', () => {
     vi.clearAllMocks();
   });
 
+  it('auto-creates initial empty conversation on mount when none exist', async () => {
+    const { saveConversation } = await import('@/store/conversations');
+
+    render(<App />);
+
+    await waitFor(() => {
+      expect(saveConversation).toHaveBeenCalledTimes(1);
+    });
+
+    // (Will later also assert ordering and single empty invariant after implementation)
+  });
+
   it('renders app with sidebar and empty state', async () => {
     render(<App />);
 
