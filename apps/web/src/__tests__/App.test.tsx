@@ -367,6 +367,48 @@ describe('App Component', () => {
     // Should create new conversation since current has messages
     expect(saveConversation).toHaveBeenCalled();
   });
+
+  it('blocks creating second empty conversation while top is empty and shows disabled affordance', async () => {
+    // Arrange
+    const user = userEvent.setup();
+    const { getConversations, saveConversation, isConversationEmpty } = await import('@/store/conversations');
+
+    // Mock returns[] so app auto-creates initial conversation
+    vi.mocked(getConversations).mockResolvedValueOnce([]);
+    
+    // isConversationEmpty returns true (conversations are empty)
+    vi.mocked(isConversationEmpty).mockResolvedValue(true);
+
+    render(<App />);
+
+    // Wait for initial empty conversation to be created
+    await waitFor(() => {
+      expect(saveConversation).toHaveBeenCalledTimes(1);
+    });
+
+    // Verify state was updated and conversation is now in sidebar
+    // by checking that the "create a new chat" empty state is gone
+    await waitFor(() => {
+      expect(screen.queryByText(/create a new chat/i)).not.toBeInTheDocument();
+    });
+
+    // Reset mocks to track only the button click interaction
+    vi.mocked(saveConversation).mockClear();
+    vi.mocked(isConversationEmpty).mockClear();
+    vi.mocked(isConversationEmpty).mockResolvedValue(true);
+
+    const newChatBtn = screen.getByRole('button', { name: /new chat/i });
+
+    // Act - Click New Chat button while top conversation is empty
+    await user.click(newChatBtn);
+
+    // Assert - isConversationEmpty should have been called to check the top conversation
+    expect(isConversationEmpty).toHaveBeenCalled();
+    // Should NOT create a second empty conversation
+    expect(saveConversation).not.toHaveBeenCalled();
+    // Button should have aria-disabled="true"
+    expect(newChatBtn).toHaveAttribute('aria-disabled', 'true');
+  });
 });
 
 

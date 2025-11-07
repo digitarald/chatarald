@@ -5,7 +5,7 @@ Maintain exactly one empty conversation at the top (newest / most recently used 
 
 ## Test List (Next)
 - [x] Auto-creates initial empty conversation on mount when none exist
-- [ ] Blocks creating second empty conversation while top conversation is empty (New Chat click is no-op)
+- [ ] Blocks creating second empty conversation while top conversation is empty (New Chat click is no-op and button shows disabled affordance)
 - [ ] Creates a new empty conversation at top only after first one gets a message
 - [ ] Reorders list so most recently messaged conversation moves to top
 

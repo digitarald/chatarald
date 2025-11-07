@@ -15,6 +15,7 @@ export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isNewChatDisabled, setIsNewChatDisabled] = useState(false);
 
   useEffect(() => {
     loadConversations();
@@ -44,10 +45,16 @@ export default function App() {
   };
 
   const createNewConversation = async () => {
-    // Don't create new conversation if current one is empty
-    if (currentConversationId && await isConversationEmpty(currentConversationId)) {
+    // Get top conversation (first in list)
+    const topConversation = conversations.length > 0 ? conversations[0] : null;
+    
+    // Don't create new conversation if top one is empty
+    if (topConversation && await isConversationEmpty(topConversation.id)) {
+      setIsNewChatDisabled(true);
       return;
     }
+    
+    setIsNewChatDisabled(false);
     
     const newConv: Conversation = {
       id: crypto.randomUUID(),
@@ -118,6 +125,7 @@ export default function App() {
                 onClick={createNewConversation}
                 variant="secondary"
                 className="w-full justify-start gap-2 bg-accent hover:bg-accent-hover transition-all"
+                aria-disabled={isNewChatDisabled}
               >
                 <Plus className="h-4 w-4" />
                 New Chat
@@ -151,6 +159,7 @@ export default function App() {
               size="icon"
               className="h-10 w-10 text-white hover:bg-slate-800"
               aria-label="New chat"
+              aria-disabled={isNewChatDisabled}
             >
               <Plus className="h-5 w-5" />
             </Button>
